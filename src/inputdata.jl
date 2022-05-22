@@ -141,7 +141,7 @@ function makeparameters(sets, options, hourinfo)
     hydrocapacity[isnan.(hydrocapacity)] = zeros(sum(isnan.(hydrocapacity)))
 
     # eleccost = capcost * crf / (CF * 8760)  =>   eleccost2/eleccost1 = crf2/crf1
-    # 1$ = 0.9€ (average 2015-2017) 
+    # 1$ = 0.9€ (average 2015-2017)
     hydroeleccost[:,2:end] = reshape(hydrovars["potentialmeancost"][activeregions,:,:], numregions, nhydro-1)   # $/kWh with 10% discount rate
     hydroeleccost[:,:] = hydroeleccost[:,:] * CRF(discountrate,40)/CRF(0.1,40) * 0.9 * 1000     # €/MWh    (0.9 €/$)
     hydroeleccost[isnan.(hydroeleccost)] = fill(999, sum(isnan.(hydroeleccost)))
@@ -151,7 +151,7 @@ function makeparameters(sets, options, hourinfo)
     monthlyinflow[isnan.(monthlyinflow)] = zeros(sum(isnan.(monthlyinflow)))
 
     dischargetime[:,:hydro,:x0] .= 168*6    # assume average discharge time 6 weeks by default
-    # if we have data on national storage capacity then use it 
+    # if we have data on national storage capacity then use it
     hydrostoragecapacity = Dict(:NOR => 121.43, :FRA => 3.59, :MED => 9.2, :SPA => 16.6, :CEN => 7.4)   # TWh
     for (reg, hydroenergy) in hydrostoragecapacity
         if reg in REGION
@@ -160,7 +160,7 @@ function makeparameters(sets, options, hourinfo)
     end
     # these countries have mostly run-of-river hydro so discharge times are lower
     dischargetime[intersect([:GER,:UK,:BAL],REGION),:hydro,:x0] .= 300
-    # use the GIS data for discharge time for future hydro 
+    # use the GIS data for discharge time for future hydro
     dischargetime[:,:hydro,2:end-1-nclasses] = reshape(hydrovars["potentialmeandischargetime"][activeregions,:,:], numregions, nhydro-1)
 
     dischargetime[:,:battery,:_] .= 1
@@ -186,7 +186,7 @@ function makeparameters(sets, options, hourinfo)
         distances = fill(distancevars["distances"], 1, 1)
         connected = fill(distancevars["connected"], 1, 1)
         connectedoffshore = fill(distancevars["connectedoffshore"], 1, 1)
-    else 
+    else
         distances = distancevars["distances"][activeregions,activeregions]
         connected = distancevars["connected"][activeregions,activeregions]
         connectedoffshore = distancevars["connectedoffshore"][activeregions,activeregions]
@@ -220,17 +220,17 @@ function makeparameters(sets, options, hourinfo)
         #               investcost  variablecost    fixedcost   lifetime    efficiency  rampingrate
         #               €/kW        €/MWh elec      €/kW/year   years                   share of capacity per hour
         :gasGT          500         1               10          30          0.4         1
-        :gasCCGT            800         1               16          30          0.6         0.3
+        :gasCCGT        800         1               16          30          0.6         0.3
         :coal           1600        2               48          30          0.45        0.15
         :bioGT          500         1               10          30          0.4         1
         :bioCCGT        800         1               16          30          0.6         0.3
-        :nuclear        5000        3               150         50          0.4         0.05
-        :wind           1200        0               43          25          1           1
-        :offwind        2300        0               86          25          1           1
+        :nuclear        3500        3               150         50          0.4         0.05
+        :wind           825         0               33          25          1           1
+        :offwind        1700        0               55          25          1           1
         :transmission   NaN         0               NaN         50          NaN         1
-        :battery        150         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
-        :pv             600         0               16          25          1           1
-        :pvroof         900         0               20          25          1           1
+        :battery        75         0.1              1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
+        :pv             323         0               8           25          1           1
+        :pvroof         423         0               6           25          1           1
         :csp            6000        0               35          30          1           1   # for solar multiple=3, storage=12 hours
         :hydro          10          0               0           80          1           1   # small artificial investcost so it doesn't overinvest in free capacity 
     ]
@@ -255,7 +255,7 @@ function makeparameters(sets, options, hourinfo)
     # 4: gas 45*.5 = 22 €/MWh, coal 22.3*.4 = 9 €/MWh, bio 26.4*.4 = 11 €/MWh, nuclear 6.7*.35 = 2.3 €/MWh
     # 5: nuclear fuel pellets 0.39 USD/kWh = 3.2 €/MWh    (see also Stuff/Nuclear fuel costs.xlsx)
     # 6: biomethane anaerobic digestion 96 €/MWh (2015), 60 €/MWh (2050), thermal gasification 37 €/MWh (2050)
-    
+
     fuelcost = AxisArray(Float64[0, 11, 22, 37, 3.2], [:_, :coal, :gas, :biogas, :uranium])     # €/MWh fuel
 
     crf = AxisArray(discountrate ./ (1 .- 1 ./(1+discountrate).^lifetime), techs)
@@ -305,7 +305,7 @@ function makeparameters(sets, options, hourinfo)
         investcost[k,6:10] .+= 200
     end
 
-    # CSP solar tower cost analysis (see CSP cost analysis.xlsx): 
+    # CSP solar tower cost analysis (see CSP cost analysis.xlsx):
     # Costs vary with the solar multiple (collector field size) and thermal storage capacity (in hours).
     # Assume a solar tower plant with solar multiple = 3 and storage = 12 hours costs 9200 USD/kW (2010).
     # Then assume solar field costs are 35% of total costs and storage about 10% of total costs (roughly inline with IRENA 2012, fig 4.4)
