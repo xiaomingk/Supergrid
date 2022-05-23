@@ -22,14 +22,14 @@ defaultoptions() = Dict(
     :carbontax => 0.0,                  # €/ton CO2
     :carboncap => 1.0,                  # global cap in kg CO2/kWh elec  (BAU scenario: ~0.5 kgCO2/kWh elec)
     :discountrate => 0.05,
-    :maxbioenergy => 0.05,              # max share of biofuel of annual regional electricity demand (assuming CCGT, less if GT) 
+    :maxbioenergy => 0.05,              # max share of biofuel of annual regional electricity demand (assuming CCGT, less if GT)
     :nuclearallowed => true,
     :globalnuclearlimit => Inf,         # maximum total nuclear capacity in all regions (GW)
     :hydroinvestmentsallowed => false,
     :transmissionallowed => :all,       # :none, :islands, :all
     :hours => 1,                        # 1,2,3 or 6 hours per period
     :solarwindarea => 1,                # area multiplier for GIS solar & wind potentials
-    :datayear => 2017,                  # year of the ERA5 input data (produced by GlobalEnergyGIS.jl)
+    :datayear => 2018,                  # year of the ERA5 input data (produced by GlobalEnergyGIS.jl)
     :selectdays => 1,
     :skipdays => 0,
     :solver => :cplex,
@@ -39,7 +39,7 @@ defaultoptions() = Dict(
     :rampingcosts => false,
     :disabletechs => [],
     :disableregions => [],
-    :sspscenario => "ssp2-34",          # SSP scenario for synthetic demand
+    :sspscenario => "ssp2-26",          # SSP scenario for synthetic demand
     :sspyear => 2050,                   # SSP year for synthetic demand
     :datafolder => "",                  # Full path to GIS input data. Set to "" to use the folder in HOMEDIR/.GlobalEnergyGIS_config.
     :resultsfile => "results.jld2"      # use "" to skip saving the results in the database
@@ -84,7 +84,7 @@ function buildvarsmodel(options, hourinfo, sets, params)
     print("  - objective:   ")
     @time makeobjective(modelname, sets, vars)
 
-    return ModelInfo(modelname, sets, params, vars, constraints, hourinfo, options) 
+    return ModelInfo(modelname, sets, params, vars, constraints, hourinfo, options)
 end
 
 # BASIC USAGE: (carbon tax 50 €/ton CO2, 3-hour time periods)
