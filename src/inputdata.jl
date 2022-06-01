@@ -119,12 +119,21 @@ function makeparameters(sets, options, hourinfo)
 
     activeregions = [r in REGION for r in dataregions]
     demand = AxisArray(zeros(numregions, nhours), REGION, HOUR)     # GW
+    wacc=AxisArray(zeros(numregions), REGION)
+    wacctr=AxisArray(zeros(numregions,numregions), REGION,REGION)
 
     inputdata = getdatafolder(options)
 
     # read wacc data
-    wacc = JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
-    wacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacctr")
+    giswacc = JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
+    for i = 1:numregions
+        wacc[i] = giswacc[i]
+    end
+
+    giswacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacc")
+    for i = 1:numregions, j = 1:numregions
+        wacctr[i,j] = giswacctr[i,j]
+    end
 
 
     # read synthetic demand data (in UTC)
@@ -265,7 +274,7 @@ function makeparameters(sets, options, hourinfo)
 
     #crf = AxisArray(discountrate ./ (1 .- 1 ./(1+discountrate).^lifetime), techs)
     crf = AxisArray(wacc ./ (1 .- 1 ./(1+wacc).^lifetime), Region, techs)
-    #crftr = AxisArray(wacctr ./ (1 .- 1 ./(1+wacctr).^50), Region, Region)
+    crftr = AxisArray(wacctr ./ (1 .- 1 ./(1+wacctr).^50), Region, Region)
 
 
 
