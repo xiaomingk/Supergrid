@@ -130,7 +130,7 @@ function makeparameters(sets, options, hourinfo)
         wacc[i] = giswacc[i]
     end
 
-    giswacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacc")
+    giswacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacctr")
     for i = 1:numregions, j = 1:numregions
         wacctr[i,j] = giswacctr[i,j]
     end
