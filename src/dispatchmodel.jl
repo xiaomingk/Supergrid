@@ -64,7 +64,7 @@ end
 function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params, vars, hourinfo, options)
     @unpack REGION, FUEL, TECH, CLASS, STORAGECLASS, HOUR, techtype, techfuel, reservoirclass = sets
     @unpack cf, transmissionlosses, demand, cfhydroinflow, efficiency, rampingrate,
-            emissionsCO2, fuelcost, variablecost, smalltransmissionpenalty, investcost, crf, cfrtr, fixedcost,
+            emissionsCO2, fuelcost, variablecost, smalltransmissionpenalty, investcost, crf, crftr, fixedcost,
             transmissioninvestcost, transmissionfixedcost, hydroeleccost = params
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, AnnualGeneration, Charging, StorageLevel,
             Transmission = vars
