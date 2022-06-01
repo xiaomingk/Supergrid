@@ -14,9 +14,9 @@ end
 # need to specify AxisArray types in more detail
 struct Params
     cf                          ::AxisArray{Float64,4}
-    transmissionlosses          ::AxisArray{Float64,2}      
-    demand                      ::AxisArray{Float64,2}  
-    hydrocapacity               ::AxisArray{Float64,2}  
+    transmissionlosses          ::AxisArray{Float64,2}
+    demand                      ::AxisArray{Float64,2}
+    hydrocapacity               ::AxisArray{Float64,2}
     cfhydroinflow               ::AxisArray{Float64,3}
     classlimits                 ::AxisArray{Float64,3}
     transmissionislands         ::AxisArray{Bool,2}
@@ -25,12 +25,13 @@ struct Params
     dischargetime               ::AxisArray{Float64,3}
     initialstoragelevel         ::Float64
     minflow_existinghydro       ::Float64
-    emissionsCO2                ::AxisArray{Float64,1}  
-    fuelcost                    ::AxisArray{Float64,1}  
-    variablecost                ::AxisArray{Float64,1}  
+    emissionsCO2                ::AxisArray{Float64,1}
+    fuelcost                    ::AxisArray{Float64,1}
+    variablecost                ::AxisArray{Float64,1}
     smalltransmissionpenalty    ::Float64
     investcost                  ::AxisArray{Float64,2}
-    crf                         ::AxisArray{Float64,1}
+    crf                         ::AxisArray{Float64,2}
+    crftr                       ::AxisArray{Float64,2}
     fixedcost                   ::AxisArray{Float64,1}
     transmissioninvestcost      ::AxisArray{Float64,2}
     transmissionfixedcost       ::AxisArray{Float64,2}

@@ -5,7 +5,7 @@ function initjumpmodel(options)
     # https://www.ibm.com/support/knowledgecenter/SSSA5P_12.8.0/ilog.odms.cplex.help/CPLEX/Parameters/topics/introListAlpha.html
     # https://www.ibm.com/support/knowledgecenter/SSSA5P_12.8.0/ilog.odms.cplex.help/CPLEX/UsrMan/topics/cont_optim/barrier/19_tuning_title_synopsis.html
         m = Model(solver=CplexSolver(CPXPARAM_LPMethod=4, CPXPARAM_Threads=threads, CPXPARAM_Read_Scale=1,
-                    CPXPARAM_Preprocessing_Dual=-1, CPXPARAM_SolutionType=2, 
+                    CPXPARAM_Preprocessing_Dual=-1, CPXPARAM_SolutionType=2,
                     CPXPARAM_ScreenOutput=Int(showsolverlog)))
                     # CPXPARAM_Emphasis_Numerical=1,
                     # CPXPARAM_Barrier_ConvergeTol=1e-8 (default), CPXPARAM_Barrier_Display=2,
@@ -13,7 +13,7 @@ function initjumpmodel(options)
                     # Tom: CPXPARAM_Barrier_ColNonzeros=200, CPXPARAM_Preprocessing_Fill=0 (doesn't help)
 
     elseif solver == :gurobi
-        m = Model(solver=GurobiSolver(Method=2, Threads=threads, BarConvTol=1.5e-8, Crossover=0)) 
+        m = Model(solver=GurobiSolver(Method=2, Threads=threads, BarConvTol=1.5e-8, Crossover=0))
                 # BarConvTol=1e-8, NumericFocus=2 (0-3), ScaleFlag=3 (-1-3), Crossover=0
     elseif solver == :glpk
         m = Model(solver=GLPKSolverLP(method=:InteriorPoint, msg_lev=GLPK.MSG_ON))
@@ -91,7 +91,7 @@ end
 function makeconstraints(m, sets, params, vars, hourinfo, options)
     @unpack REGION, FUEL, TECH, CLASS, STORAGECLASS, HOUR, techtype, techfuel, reservoirclass = sets
     @unpack cf, transmissionlosses, demand, cfhydroinflow, efficiency, rampingrate, dischargetime, initialstoragelevel,
-            minflow_existinghydro, emissionsCO2, fuelcost, variablecost, smalltransmissionpenalty, investcost, crf, fixedcost,
+            minflow_existinghydro, emissionsCO2, fuelcost, variablecost, smalltransmissionpenalty, investcost, crf, crftr, fixedcost,
             transmissioninvestcost, transmissionfixedcost, hydroeleccost, solarcombinedarea,
             pv_density, csp_density, cspsolarmultiple = params
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, AnnualGeneration, Charging, StorageLevel,
@@ -143,7 +143,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             Transmission[r1,r2,h] <= TransmissionCapacity[r1,r2] * hoursperperiod
 
         TwoWayStreet[r1 in REGION, r2 in REGION],
-            TransmissionCapacity[r1,r2] == TransmissionCapacity[r2,r1] 
+            TransmissionCapacity[r1,r2] == TransmissionCapacity[r2,r1]
 
         NoTransmission[r1 in REGION, r2 in REGION; transmissioninvestcost[r1,r2] == 0],
             TransmissionCapacity[r1,r2] == 0
@@ -158,7 +158,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         # This does not quite make the variable bound redundant, because e.g. some pixels in PV class 1 are class "0" for CSP,
-        # and are therefore unaffected by this constraint. 
+        # and are therefore unaffected by this constraint.
         SolarOverlap[r in REGION, pv in CLASS[:pv], csp in CLASS[:csp]],
             SolarCapacity[r,:pv,pv,csp]/pv_density + SolarCapacity[r,:csp,pv,csp]/csp_density/cspsolarmultiple <=
                 solarcombinedarea[r,pv,csp]
@@ -187,9 +187,9 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
                 + 0.001 * sum(Electricity[r,k,c,h] * variablecost[k] for k in TECH, c in CLASS[k], h in HOUR) +
                 + 0.001 * sum(Electricity[r,:hydro,c,h] * hydroeleccost[r,c] for c in CLASS[:hydro], h in HOUR) +
                 + 0.001 * sum(Transmission[r,r2,h] * smalltransmissionpenalty for r2 in REGION, h in HOUR) +
-                + sum(Capacity[r,k,c] * (investcost[k,c] * crf[k] + fixedcost[k]) for k in TECH, c in CLASS[k]) +
+                + sum(Capacity[r,k,c] * (investcost[k,c] * crf[r,k] + fixedcost[k]) for k in TECH, c in CLASS[k]) +
                 + 0.5 * sum(TransmissionCapacity[r,r2] *
-                            (transmissioninvestcost[r,r2] * crf[:transmission] + transmissionfixedcost[r,r2]) for r2 in REGION)
+                            (transmissioninvestcost[r,r2] * crftr[r,r2] + transmissionfixedcost[r,r2]) for r2 in REGION)
         # =#
     end #constraints
 
