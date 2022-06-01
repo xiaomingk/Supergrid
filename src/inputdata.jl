@@ -122,6 +122,11 @@ function makeparameters(sets, options, hourinfo)
 
     inputdata = getdatafolder(options)
 
+    # read wacc data
+    wacc = JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
+    wacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacctr")
+
+
     # read synthetic demand data (in UTC)
     gisdemand = JLD.load(joinpath(inputdata,
         "SyntheticDemand_$(regionset)_$sspscenario-$(sspyear)_$datayear.jld"), "demand")
@@ -232,7 +237,7 @@ function makeparameters(sets, options, hourinfo)
         :pv             323         0               8           25          1           1
         :pvroof         423         0               6           25          1           1
         :csp            6000        0               35          30          1           1   # for solar multiple=3, storage=12 hours
-        :hydro          10          0               0           80          1           1   # small artificial investcost so it doesn't overinvest in free capacity 
+        :hydro          10          0               0           80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
     ]
     techs = techtable[:,1]
     techdata = Float64.(techtable[:,2:end])
@@ -258,7 +263,11 @@ function makeparameters(sets, options, hourinfo)
 
     fuelcost = AxisArray(Float64[0, 11, 22, 37, 3.2], [:_, :coal, :gas, :biogas, :uranium])     # €/MWh fuel
 
-    crf = AxisArray(discountrate ./ (1 .- 1 ./(1+discountrate).^lifetime), techs)
+    #crf = AxisArray(discountrate ./ (1 .- 1 ./(1+discountrate).^lifetime), techs)
+    crf = AxisArray(wacc ./ (1 .- 1 ./(1+wacc).^lifetime), Region, techs)
+    #crftr = AxisArray(wacctr ./ (1 .- 1 ./(1+wacctr).^50), Region, Region)
+
+
 
     emissionsCO2 = AxisArray(zeros(length(FUEL)), FUEL)
     emissionsCO2[[:coal,:gas]] = [0.330, 0.202]     # kgCO2/kWh fuel (or ton/MWh or kton/GWh)
