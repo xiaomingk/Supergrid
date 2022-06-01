@@ -346,7 +346,7 @@ function makeparameters(sets, options, hourinfo)
 
     return Params(cf, transmissionlosses, demand, hydrocapacity, cfhydroinflow, classlimits, transmissionislands,
         efficiency, rampingrate, dischargetime, initialstoragelevel, minflow_existinghydro, emissionsCO2, fuelcost,
-        variablecost, smalltransmissionpenalty, investcost, crf, fixedcost, transmissioninvestcost, transmissionfixedcost,
+        variablecost, smalltransmissionpenalty, investcost, crf, crftr, fixedcost, transmissioninvestcost, transmissionfixedcost,
         hydroeleccost, solarcombinedarea, pv_density, csp_density, cspsolarmultiple)
 end
 
