@@ -128,7 +128,7 @@ function makeparameters(sets, options, hourinfo)
     for i = 1:numregions
         demand[i,:] = reducehours(gisdemand[:,i], 1, hourinfo) / 1000       # GW
     end
-
+    giswacc = JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
     hydrovars = matread(joinpath(inputdata, "GISdata_hydro_$regionset.mat"))
     hydrocapacity = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
     hydroeleccost = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
@@ -143,7 +143,7 @@ function makeparameters(sets, options, hourinfo)
     # eleccost = capcost * crf / (CF * 8760)  =>   eleccost2/eleccost1 = crf2/crf1
     # 1$ = 0.9€ (average 2015-2017)
     hydroeleccost[:,2:end] = reshape(hydrovars["potentialmeancost"][activeregions,:,:], numregions, nhydro-1)   # $/kWh with 10% discount rate
-    hydroeleccost[:,:] = hydroeleccost[:,:] * CRF(discountrate,40)/CRF(0.1,40) * 0.9 * 1000     # €/MWh    (0.9 €/$)
+    hydroeleccost[:,:] = hydroeleccost[:,:] * CRF(giswacc[:],40)/CRF(0.1,40) * 0.9 * 1000     # €/MWh    (0.9 €/$)
     hydroeleccost[isnan.(hydroeleccost)] = fill(999, sum(isnan.(hydroeleccost)))
 
     monthlyinflow[:,:x0,:] = hydrovars["existinginflowcf"][activeregions,:]
@@ -261,7 +261,6 @@ function makeparameters(sets, options, hourinfo)
 
     #crf = AxisArray(discountrate ./ (1 .- 1 ./(1+discountrate).^lifetime), techs)
     # read wacc data
-    giswacc = JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
     giswacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacctr")
 
     crf=AxisArray(zeros(numregions, numtechs), REGION, techs)
