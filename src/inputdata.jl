@@ -143,7 +143,9 @@ function makeparameters(sets, options, hourinfo)
     # eleccost = capcost * crf / (CF * 8760)  =>   eleccost2/eleccost1 = crf2/crf1
     # 1$ = 0.9€ (average 2015-2017)
     hydroeleccost[:,2:end] = reshape(hydrovars["potentialmeancost"][activeregions,:,:], numregions, nhydro-1)   # $/kWh with 10% discount rate
-    hydroeleccost[:,:] = hydroeleccost[:,:] * CRF(giswacc[:],40)/CRF(0.1,40) * 0.9 * 1000     # €/MWh    (0.9 €/$)
+    for r in 1:numregions, c in 1:nhydro
+    hydroeleccost[r,c] = hydroeleccost[r,c] * CRF(giswacc[r],40)/CRF(0.1,40) * 0.9 * 1000     # €/MWh    (0.9 €/$)
+    end
     hydroeleccost[isnan.(hydroeleccost)] = fill(999, sum(isnan.(hydroeleccost)))
 
     monthlyinflow[:,:x0,:] = hydrovars["existinginflowcf"][activeregions,:]
