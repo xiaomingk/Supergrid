@@ -156,9 +156,9 @@ function analyzeresults(results::Results)
             regcost = Systemcost ./ (vec(sum(annualelec, dims=1)[1:end-1]) - existinghydro) * 1000
             totcost = sum(Systemcost) / (sum(annualelec[:,:TOTAL]) - sum(existinghydro)) * 1000
             lcoe = NamedArray(collect([regcost; totcost]'), (["system cost (€/MWh)"], [REGION; :TOTAL]))
-            return lcoe
             println("Regional system cost per MWh generated (€/MWh):")
             display(round.(lcoe, digits=2))
+            return lcoe
 
             lr = length(REGION)
             stackedbar(String.(REGION), collect(annualelec[displayorder,1:end-1]'/1000); labels=techlabels, size=(340+70*lr,550), left_margin=25px,
