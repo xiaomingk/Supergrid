@@ -157,8 +157,8 @@ function analyzeresults(results::Results)
             totcost = sum(Systemcost) / (sum(annualelec[:,:TOTAL]) - sum(existinghydro)) * 1000
             lcoe = NamedArray(collect([regcost; totcost]'), (["system cost (€/MWh)"], [REGION; :TOTAL]))
             return lcoe
-            #println("Regional system cost per MWh generated (€/MWh):")
-            #display(round.(lcoe, digits=2))
+            println("Regional system cost per MWh generated (€/MWh):")
+            display(round.(lcoe, digits=2))
 
             lr = length(REGION)
             stackedbar(String.(REGION), collect(annualelec[displayorder,1:end-1]'/1000); labels=techlabels, size=(340+70*lr,550), left_margin=25px,
@@ -178,9 +178,8 @@ function analyzeresults(results::Results)
                 totcost2 = [sum(Systemcost[1:8]) sum(Systemcost[9:15]) sum(Systemcost[16:21]) sum(Systemcost)]
                 tothydro = [sum(existinghydro[1:8]) sum(existinghydro[9:15]) sum(existinghydro[16:21]) sum(existinghydro)]
                 lcoe_tot = NamedArray(totcost2./(totdemand .- tothydro) * 1000, (["system cost (€/MWh)"], ["EU","CAS","China","TOTAL"]))
-                return lcoe_tot
-                #println("\nSystem cost per MWh demand (€/MWh):")
-                #display(round.(lcoe_tot, digits=2))
+                println("\nSystem cost per MWh demand (€/MWh):")
+                display(round.(lcoe_tot, digits=2))
             else
                 stackedbar(["TOTAL"], collect(annualelec[displayorder,:TOTAL]')/1e3; labels=techlabels, left_margin=30px,
                     size=(350,600), line=0, tickfont=14, legendfont=14, color_palette=palette, yformatter=:plain,
