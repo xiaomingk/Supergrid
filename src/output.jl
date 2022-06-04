@@ -32,7 +32,7 @@ function readresults(model::ModelInfo, status::Symbol)
     cost = AxisArray(getvalue(Systemcost))
     emis = AxisArray(getvalue(CO2emissions))
     fuel = AxisArray(getvalue(FuelUse))
-    # getting Electricity for all set combos is slowest, so let's optimize storage format and use faster internal function call 
+    # getting Electricity for all set combos is slowest, so let's optimize storage format and use faster internal function call
     elec = Dict((k,c) => [JuMP._getValue(Electricity[r,k,c,h]) for h in HOUR, r in REGION] for k in TECH for c in CLASS[k]);
     charge = AxisArray(getvalue(Charging))
     # oops, StorageLevel is also slow
@@ -121,7 +121,7 @@ function analyzeresults(results::Results)
     @unpack REGION, FUEL, TECH, CLASS, HOUR, techtype, STORAGECLASS = results.sets
     @unpack demand, classlimits, hydrocapacity = results.params
     @unpack CO2emissions, FuelUse, Electricity, Transmission, Capacity, TransmissionCapacity, Charging, StorageLevel, Systemcost = results
-    
+
     hoursperperiod = results.hourinfo.hoursperperiod
 
     capacmat = [sum(Capacity[r,k,c] for c in CLASS[k]) for k in TECH, r in REGION]
@@ -210,7 +210,7 @@ function analyzeresults(results::Results)
         regdischarge = regelec[:, findfirst(displaytechs .== :battery)]
         regdemand = sumdimdrop(demand[regs,:], dims=1)
 
-        composite = plot(; layout=grid(2,3,widths=[.4,.2,.4,.4,.2,.4]), size=(1850,950),    
+        composite = plot(; layout=grid(2,3,widths=[.4,.2,.4,.4,.2,.4]), size=(1850,950),
                         legend=false, tickfont=16, titlefont=20, optionlist...)
         for (i,k) in enumerate([:wind, :offwind, :hydro, :pv, :pvroof, :csp])
             colors = [palette[findfirst(displaytechs .== k)]; RGB(0.9,0.9,0.9)]
@@ -247,14 +247,14 @@ function analyzeresults(results::Results)
     end
 
     # chart(:NOR)
-    
+
     # if true   # plot hydro storage & shadow prices
     #   plot(elec[:,:hydro,:NOR]/hoursperperiod/1000, size=(1850,950), tickfont=16, legendfont=16)
     #   plot!(sum(elec[:,:wind,:],2)/hoursperperiod/1000)
     #   display(plot!(vec(mean(prices,1))))
     # end
 
-    return annualelec, capac, tcapac, chart
+    return annualelec, capac, tcapac, chart, lcoe
 end
 
 function chart_energymix_scenarios(scenarios, resultsnames, resultsfile; size=(900,550), options...)
