@@ -188,7 +188,7 @@ function analyzeresults(results::Results)
                 display(plot!([xpos; xpos], [zeros(1)'; totdemand*hoursperperiod/1e3], line=3, color=:black,
                     xlims=(-0.2,1.2), label="demand"))
             end
-            country == :BARS && return nothing
+            country == :BARS && return lcoe
         end
 
         if country == :TOTAL || country == :TOT || country == :total || country == :tot
