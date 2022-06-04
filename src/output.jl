@@ -188,7 +188,7 @@ function analyzeresults(results::Results)
                 display(plot!([xpos; xpos], [zeros(1)'; totdemand*hoursperperiod/1e3], line=3, color=:black,
                     xlims=(-0.2,1.2), label="demand"))
             end
-            country == :BARS && return lcoe
+            country == :BARS && return nothing
         end
 
         if country == :TOTAL || country == :TOT || country == :total || country == :tot
@@ -254,7 +254,7 @@ function analyzeresults(results::Results)
     #   display(plot!(vec(mean(prices,1))))
     # end
 
-    return annualelec, capac, tcapac, chart, lcoe
+    return annualelec, capac, tcapac, chart
 end
 
 function chart_energymix_scenarios(scenarios, resultsnames, resultsfile; size=(900,550), options...)
