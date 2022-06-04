@@ -158,6 +158,7 @@ function analyzeresults(results::Results)
             lcoe = NamedArray(collect([regcost; totcost]'), (["system cost (€/MWh)"], [REGION; :TOTAL]))
             println("Regional system cost per MWh generated (€/MWh):")
             display(round.(lcoe, digits=2))
+            return lcoe
 
             lr = length(REGION)
             stackedbar(String.(REGION), collect(annualelec[displayorder,1:end-1]'/1000); labels=techlabels, size=(340+70*lr,550), left_margin=25px,
@@ -179,6 +180,7 @@ function analyzeresults(results::Results)
                 lcoe_tot = NamedArray(totcost2./(totdemand .- tothydro) * 1000, (["system cost (€/MWh)"], ["EU","CAS","China","TOTAL"]))
                 println("\nSystem cost per MWh demand (€/MWh):")
                 display(round.(lcoe_tot, digits=2))
+                return lcoe_tot
             else
                 stackedbar(["TOTAL"], collect(annualelec[displayorder,:TOTAL]')/1e3; labels=techlabels, left_margin=30px,
                     size=(350,600), line=0, tickfont=14, legendfont=14, color_palette=palette, yformatter=:plain,
@@ -188,7 +190,8 @@ function analyzeresults(results::Results)
                 display(plot!([xpos; xpos], [zeros(1)'; totdemand*hoursperperiod/1e3], line=3, color=:black,
                     xlims=(-0.2,1.2), label="demand"))
             end
-            country == :BARS && return lcoe, lcoe_tot
+            country == :BARS && return nothing
+
         end
 
         if country == :TOTAL || country == :TOT || country == :total || country == :tot
