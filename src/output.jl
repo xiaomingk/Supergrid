@@ -1,4 +1,4 @@
-using NamedArrays, StatsPlots, JLD2, Measures
+using NamedArrays, StatsPlots, JLD2, Measures, DataFrames, CSV
 
 sumdimdrop(x::AbstractArray; dims) = dropdims(sum(x, dims=dims), dims=dims)
 
@@ -158,7 +158,8 @@ function analyzeresults(results::Results)
             lcoe = NamedArray(collect([regcost; totcost]'), (["system cost (€/MWh)"], [REGION; :TOTAL]))
             println("Regional system cost per MWh generated (€/MWh):")
             display(round.(lcoe, digits=2))
-            return lcoe
+            lcost=DataFrame(lcoe)
+            CSV.write("Lcost.csv",lcost)
 
             lr = length(REGION)
             stackedbar(String.(REGION), collect(annualelec[displayorder,1:end-1]'/1000); labels=techlabels, size=(340+70*lr,550), left_margin=25px,
