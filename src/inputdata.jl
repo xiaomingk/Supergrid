@@ -110,7 +110,7 @@ function makeparameters(sets, options, hourinfo)
     initialstoragelevel = 0.7       # make this tech dependent later
     minflow_existinghydro = 0.4
     cspsolarmultiple = 3.0          # peak capacity of collectors divided by turbine power
-    cspthermalstoragehours = 12
+    cspthermalstoragehours = 10
 
     numregions = length(REGION)
     nhours = length(HOUR)
@@ -202,7 +202,7 @@ function makeparameters(sets, options, hourinfo)
     end
 
     # from Bogdanov & Breyer (2016) "North-East Asian Super Grid..."
-    transmissioncostdata = connected .* (150 .+ 0.2*distances) .+ connectedoffshore .* (150 .+ 0.3*distances)
+    transmissioncostdata = connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 0.6*distances)
     transmissionfixedcostdata = connected .* (1.8 .+ 0.0075*distances) .+ connectedoffshore .* (1.8 .+ 0.0010*distances)
     transmissioninvestcost = AxisArray(transmissioncostdata, REGION, REGION)        # €/kW
     transmissionfixedcost = AxisArray(transmissionfixedcostdata, REGION, REGION)        # €/kW
@@ -226,14 +226,14 @@ function makeparameters(sets, options, hourinfo)
         :coal           1600        2               48          30          0.45        0.15
         :bioGT          500         1               10          30          0.4         1
         :bioCCGT        800         1               16          30          0.6         0.3
-        :nuclear        7000        3               150         50          0.4         0.05
+        :nuclear        5000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
         :transmission   NaN         0               NaN         50          NaN         1
         :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
         :pv             323         0               8           25          1           1
         :pvroof         423         0               6           25          1           1
-        :csp            6000        0               35          30          1           1   # for solar multiple=3, storage=12 hours
+        :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours
         :hydro          10          0               0           80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
     ]
     techs = techtable[:,1]
@@ -326,7 +326,7 @@ function makeparameters(sets, options, hourinfo)
     # Then assume solar field costs are 35% of total costs and storage about 10% of total costs (roughly inline with IRENA 2012, fig 4.4)
     # for this plant, and that costs for plants with other parameters vary linearly with solar multiple and storage size.
     # Finally convert to euro (1.15 USD/EUR) and assume a cost reduction of 25% to 2050. Resulting cost for a 3/12 solar tower: 6000 €/kW.
-    investcost[:csp,:] = investcost[:csp,:] * (0.55 + 0.35*cspsolarmultiple/3 + 0.10*cspthermalstoragehours/12)
+    investcost[:csp,:] = investcost[:csp,:] * (0.55 + 0.35*cspsolarmultiple/3 + 0.10*cspthermalstoragehours/10)
 
     cf[:,:csp,:,:] = cf[:,:csp,:,:] * cspsolarmultiple                          # OK if this surpasses 100%
     classlimits[:,:csp,:] = classlimits[:,:csp,:] / cspsolarmultiple            # GIS data calculated as peak solar power
