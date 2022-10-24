@@ -202,8 +202,8 @@ function makeparameters(sets, options, hourinfo)
     end
 
     # from Bogdanov & Breyer (2016) "North-East Asian Super Grid..."
-    transmissioncostdata = connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 0.6*distances)
-    transmissionfixedcostdata = connected .* (1.8 .+ 0.0075*distances) .+ connectedoffshore .* (1.8 .+ 0.0010*distances)
+    transmissioncostdata = connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 0.47*distances)
+    transmissionfixedcostdata = connected .* (3 .+ 0.008*distances) .+ connectedoffshore .* (3 .+ 0.001645*distances)
     transmissioninvestcost = AxisArray(transmissioncostdata, REGION, REGION)        # €/kW
     transmissionfixedcost = AxisArray(transmissionfixedcostdata, REGION, REGION)        # €/kW
     transmissionlossdata = (connected .| connectedoffshore) .* (0.014 .+ 0.016*distances/1000)
@@ -229,7 +229,7 @@ function makeparameters(sets, options, hourinfo)
         :nuclear        5000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
-        :transmission   NaN         0               NaN         50          NaN         1
+        :transmission   NaN         0               NaN         40          NaN         1
         :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
         :pv             323         0               8           25          1           1
         :pvroof         423         0               6           25          1           1
@@ -272,7 +272,7 @@ function makeparameters(sets, options, hourinfo)
     end
 
     for i = 1:numregions, j = 1:numregions
-        crftr[i,j] = giswacctr[i,j] / (1 - 1 /(1+giswacctr[i,j])^50)
+        crftr[i,j] = giswacctr[i,j] / (1 - 1 /(1+giswacctr[i,j])^40)
     end
 
     emissionsCO2 = AxisArray(zeros(length(FUEL)), FUEL)
