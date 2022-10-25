@@ -126,7 +126,7 @@ function makeparameters(sets, options, hourinfo)
     gisdemand = JLD.load(joinpath(inputdata,
         "SyntheticDemand_$(regionset)_$sspscenario-$(sspyear)_$datayear.jld"), "demand")
     for i = 1:numregions
-        demand[i,:] = reducehours(gisdemand[:,i], 1, hourinfo) / 1000       # GW
+        demand[i,:] = reducehours(gisdemand[:,i], 1, hourinfo) * 2 / 1000       # GW
     end
     giswacc = JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
     hydrovars = matread(joinpath(inputdata, "GISdata_hydro_$regionset.mat"))
