@@ -226,7 +226,7 @@ function makeparameters(sets, options, hourinfo)
         :coal           1600        2               48          30          0.45        0.15
         :bioGT          500         1               10          30          0.4         1
         :bioCCGT        800         1               16          30          0.6         0.3
-        :nuclear        3000        3               150         50          0.4         0.05
+        :nuclear        2000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
         :transmission   NaN         0               NaN         40          NaN         1
