@@ -202,7 +202,7 @@ function makeparameters(sets, options, hourinfo)
     end
 
     # from Bogdanov & Breyer (2016) "North-East Asian Super Grid..."
-    transmissioncostdata = connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 0.8*distances)
+    transmissioncostdata = connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 0.6*distances)
     transmissionfixedcostdata = connected .* (3 .+ 0.008*distances) .+ connectedoffshore .* (3 .+ 0.001645*distances)
     transmissioninvestcost = AxisArray(transmissioncostdata, REGION, REGION)        # €/kW
     transmissionfixedcost = AxisArray(transmissionfixedcostdata, REGION, REGION)        # €/kW
@@ -226,7 +226,7 @@ function makeparameters(sets, options, hourinfo)
         :coal           1600        2               48          30          0.45        0.15
         :bioGT          500         1               10          30          0.4         1
         :bioCCGT        800         1               16          30          0.6         0.3
-        :nuclear        4000        3               150         50          0.4         0.05
+        :nuclear        5000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
         :transmission   NaN         0               NaN         40          NaN         1
