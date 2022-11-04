@@ -202,7 +202,7 @@ function makeparameters(sets, options, hourinfo)
     end
 
     # from Bogdanov & Breyer (2016) "North-East Asian Super Grid..."
-    transmissioncostdata = connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 1*distances)
+    transmissioncostdata = connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 0.47*distances)
     transmissionfixedcostdata = connected .* (3 .+ 0.008*distances) .+ connectedoffshore .* (3 .+ 0.001645*distances)
     transmissioninvestcost = AxisArray(transmissioncostdata, REGION, REGION)        # €/kW
     transmissionfixedcost = AxisArray(transmissionfixedcostdata, REGION, REGION)        # €/kW
@@ -230,9 +230,9 @@ function makeparameters(sets, options, hourinfo)
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
         :transmission   NaN         0               NaN         40          NaN         1
-        :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
-        :pv             323         0               8           25          1           1
-        :pvroof         423         0               6           25          1           1
+        :battery        380         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
+        :pv             165         0               8           25          1           1
+        :pvroof         265         0               6           25          1           1
         :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours
         :hydro          10          0               0           80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
     ]
