@@ -255,7 +255,7 @@ function analyzeresults(results::Results)
     #   display(plot!(vec(mean(prices,1))))
     # end
 
-    return annualelec, capac, tcapac, chart, prices
+    return annualelec, capac, tcapac, chart, price
 end
 
 function chart_energymix_scenarios(scenarios, resultsnames, resultsfile; size=(900,550), options...)
@@ -296,7 +296,7 @@ function readscenariodata(resultname, resultsfile)
     println(resultname, ": ", resultsfile)
     results = loadresults(resultname, resultsfile=resultsfile)
 
-    annualelec, capac, tcapac, chart = analyzeresults(results);
+    annualelec, capac, tcapac, chart, price = analyzeresults(results);
     chart(:BARS)
     println()
     display(round.(Int, tcapac))
