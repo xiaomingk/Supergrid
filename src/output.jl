@@ -141,7 +141,7 @@ function analyzeresults(results::Results)
     end
     existingstoragelevel = NamedArray(storage, (collect(HOUR), storagetechs, REGION), (:HOUR, :TECH, :REGION))
     tcapac = NamedArray([TransmissionCapacity[r1,r2] for r1 in REGION, r2 in REGION], (REGION,REGION))
-    price = NamedArray([Price[r,h] for r in REGION, h in HOUR], (REGION, collect(HOUR)))       # €/kWh
+    price = NamedArray([price[r,h] for r in REGION, h in HOUR], (REGION, collect(HOUR)))       # €/kWh
 
     plotly()
 
