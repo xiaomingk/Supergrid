@@ -25,6 +25,7 @@ function readresults(model::ModelInfo, status::Symbol)
     @unpack REGION, TECH, CLASS, HOUR, techtype, STORAGECLASS = model.sets
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, Charging, StorageLevel, Transmission, TransmissionCapacity, Capacity = model.vars
     @unpack demand, classlimits, hydrocapacity = model.params
+    @unpack ElecDemand = model.constraints
     storagetechs = [k for k in TECH if techtype[k] == :storage]
 
     params = Dict(:demand => demand, :classlimits => classlimits, :hydrocapacity => hydrocapacity)
@@ -40,8 +41,9 @@ function readresults(model::ModelInfo, status::Symbol)
     transmission = AxisArray(getvalue(Transmission))
     transmissioncapac = AxisArray(getvalue(TransmissionCapacity))
     capac = getdict(getvalue(Capacity))
+    price = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])
 
-    return Results(status, model.options, model.hourinfo, model.sets, params, cost, emis, fuel, elec, charge, storage, transmission, transmissioncapac, capac)
+    return Results(status, model.options, model.hourinfo, model.sets, params, cost, emis, fuel, elec, charge, storage, transmission, transmissioncapac, capac, price)
 end
 
 function saveresults(results::Results, runname; resultsfile="", group="", compress=true)
@@ -120,7 +122,7 @@ const CHARTTECHS = Dict(
 function analyzeresults(results::Results)
     @unpack REGION, FUEL, TECH, CLASS, HOUR, techtype, STORAGECLASS = results.sets
     @unpack demand, classlimits, hydrocapacity = results.params
-    @unpack CO2emissions, FuelUse, Electricity, Transmission, Capacity, TransmissionCapacity, Charging, StorageLevel, Systemcost = results
+    @unpack CO2emissions, FuelUse, Electricity, Transmission, Capacity, TransmissionCapacity, Charging, StorageLevel, Systemcost, price = results
 
     hoursperperiod = results.hourinfo.hoursperperiod
 
@@ -139,10 +141,7 @@ function analyzeresults(results::Results)
     end
     existingstoragelevel = NamedArray(storage, (collect(HOUR), storagetechs, REGION), (:HOUR, :TECH, :REGION))
     tcapac = NamedArray([TransmissionCapacity[r1,r2] for r1 in REGION, r2 in REGION], (REGION,REGION))
-
-    @unpack ElecDemand = model.constraints
-    prices = [getdual(ElecDemand[r,h]) for r in REGION, h in HOUR]
-    prices = NamedArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR], (REGION, collect(HOUR)))       # €/kWh
+    price = NamedArray([Price[r,h] for r in REGION, h in HOUR], (REGION, collect(HOUR)))       # €/kWh
 
     plotly()
 
