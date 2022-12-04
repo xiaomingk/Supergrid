@@ -115,13 +115,13 @@ function runmodel(; name="", group="", optionlist...)       # carbon tax in €/
         saveresults(results, name, resultsfile=filename, group=group)
     end
 
-    annualelec, capac, tcapac, chart = analyzeresults(results)
+    annualelec, capac, tcapac, chart, price = analyzeresults(results)
 
     if status != :Optimal
         @warn "The solver did not report an optimal solution. It could still be fine, but examine the log."
     end
 
-    return results, annualelec, capac, tcapac, chart
+    return results, annualelec, capac, tcapac, chart, price
 end
 
 end #module

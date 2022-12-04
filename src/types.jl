@@ -121,4 +121,5 @@ struct Results
     Transmission                ::AxisArray{Float64,3}
     TransmissionCapacity        ::AxisArray{Float64,2}
     Capacity                    ::Dict{Tuple{Symbol,Symbol,Symbol}, Float64}
+    Price                       ::AxisArray{Float64,2}
 end
