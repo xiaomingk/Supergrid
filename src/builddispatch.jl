@@ -15,7 +15,7 @@ function builddispatchvarsmodel(capacity, transmissioncapacity, options, hourinf
     print("  - objective:   ")
     @time makeobjective(modelname, sets, vars)
 
-    return ModelInfo(modelname, sets, params, vars, constraints, hourinfo, options) 
+    return ModelInfo(modelname, sets, params, vars, constraints, hourinfo, options)
 end
 
 # BASIC USAGE: (carbon tax 50 €/ton CO2, 3-hour time periods)
@@ -46,11 +46,11 @@ function rundispatchmodel(capacity, transmissioncapacity; name="", group="", opt
         saveresults(results, name, resultsfile=filename, group=group)
     end
 
-    annualelec, capac, tcapac, chart = analyzeresults(results)
+    annualelec, capac, tcapac, chart, price = analyzeresults(results)
 
     if status != :Optimal
         @warn "The solver did not report an optimal solution. It could still be fine, but examine the log."
     end
 
-    return results, annualelec, capac, tcapac, chart
+    return results, annualelec, capac, tcapac, chart, price
 end
