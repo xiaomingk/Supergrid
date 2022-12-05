@@ -5,7 +5,7 @@ flip(x) = permutedims(x, (2,1))
 showall(x) = show(stdout, "text/plain", x)
 
 @userplot StackedArea
-# Bugfix of StatsPlots.areaplot(), i.e. reverse the legend order. 
+# Bugfix of StatsPlots.areaplot(), i.e. reverse the legend order.
 @recipe function f(a::StackedArea)
     data = cumsum(a.args[end], dims=2)
     n = size(data, 2)
@@ -116,7 +116,7 @@ function printtable(title::String, setnames::Vector, datarows::Array, columnname
     if columnname != :none
         df = unstack(df, columnname, :value)
     end
-    show(IOContext(STDOUT, displaysize=(100,120)), "text/plain", df)        
+    show(IOContext(STDOUT, displaysize=(100,120)), "text/plain", df)
 end
 
 printtable(jarr::JuMP.JuMPArray{Float64,2}) = printtable("", jarr)
