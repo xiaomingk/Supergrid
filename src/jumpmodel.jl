@@ -107,8 +107,10 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
 
         ElecDemand[r in REGION, h in HOUR],
             sum(Electricity[r,k,c,h] for k in TECH, c in CLASS[k]) - sum(Charging[r,k,h] for k in TECH if techtype[k] == :storage) +
-                + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) >=
+                + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) - (1 + 1 / efficiency[:hydrogenstore]) * Electricity[r,:hydrogenstore,:_,h] >=
                     demand[r,h] * hoursperperiod
+        HydroDemand,
+            sum(Electricity[r,:hydrogenstore,:_,h] for r in REGION, h in HOUR) >= sum(demand[r,h] for r in REGION, h in HOUR) * hoursperperiod * 0.01
 
         # <= instead of == to avoid need of slack variable to deal with spillage during spring floods, etc
         StorageBalance[r in REGION, k in storagetechs, sc in STORAGECLASS[k], h in HOUR],
@@ -149,7 +151,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             TransmissionCapacity[r1,r2] == 0
 
         Calculate_AnnualGeneration[r in REGION, k in TECH],
-            AnnualGeneration[r,k] == sum(Electricity[r,k,c,h] for c in CLASS[k], h in HOUR)
+            AnnualGeneration[r,k] == sum(Electricity[r,k,c,h] for c in CLASS[k], h in HOUR) + (1 / efficiency[:hydrogenstore] - 1) * sum(Electricity[r,:hydrogenstore,:_,h] for h in HOUR)
 
         Calculate_FuelUse[r in REGION, f in FUEL; f != :_],
             FuelUse[r,f] == sum(AnnualGeneration[r,k]/efficiency[k] for k in TECH if techfuel[k]==f)
@@ -214,7 +216,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
         end
     end
 
-    return Constraints(ElecCapacity, ElecDemand, RampingDown, RampingUp, StorageBalance, MaxStorageCapacity, InitialStorageLevel,
+    return Constraints(ElecCapacity, ElecDemand, HydroDemand, RampingDown, RampingUp, StorageBalance, MaxStorageCapacity, InitialStorageLevel,
                 MaxTransmissionCapacity, TwoWayStreet, NoTransmission, NoCharging, ChargingNeedsBattery,
                 Calculate_AnnualGeneration, Calculate_FuelUse, TotalCO2, Totalcosts)
 end

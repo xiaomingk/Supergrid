@@ -76,8 +76,10 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
     @constraints m begin
         ElecDemand[r in REGION, h in HOUR],
             sum(Electricity[r,k,c,h] for k in TECH, c in CLASS[k]) - sum(Charging[r,k,h] for k in TECH if techtype[k] == :storage) +
-                + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) >=
+                + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) - (1 + 1 / efficiency[:hydrogenstore]) * Electricity[r,:hydrogenstore,:_,h] >=
                     demand[r,h] * hoursperperiod
+        HydroDemand,
+            sum(Electricity[r,:hydrogenstore,:_,h] for r in REGION, h in HOUR) >= sum(demand[r,h] for r in REGION, h in HOUR) * hoursperperiod * 0.01
 
         # <= instead of == to avoid need of slack variable to deal with spillage during spring floods, etc
         StorageBalance[r in REGION, k in storagetechs, sc in STORAGECLASS[k], h in HOUR],
@@ -90,7 +92,7 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
                 - 0.001 * sum(Electricity[r,k,c,h]/efficiency[k] for c in reservoirclass[sc])
 
         Calculate_AnnualGeneration[r in REGION, k in TECH],
-            AnnualGeneration[r,k] == sum(Electricity[r,k,c,h] for c in CLASS[k], h in HOUR)
+            AnnualGeneration[r,k] == sum(Electricity[r,k,c,h] for c in CLASS[k], h in HOUR) + (1 / efficiency[:hydrogenstore] - 1) * sum(Electricity[r,:hydrogenstore,:_,h] for h in HOUR)
 
         Calculate_FuelUse[r in REGION, f in FUEL; f != :_],
             FuelUse[r,f] == sum(AnnualGeneration[r,k]/efficiency[k] for k in TECH if techfuel[k]==f)
@@ -134,7 +136,7 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
         RampingDown = RampingUp = nothing
     end
 
-    return Constraints(nothing, ElecDemand, RampingDown, RampingUp, StorageBalance, nothing, nothing,
+    return Constraints(nothing, ElecDemand, HydroDemand, RampingDown, RampingUp, StorageBalance, nothing, nothing,
                 nothing, nothing, nothing, nothing, nothing,
                 Calculate_AnnualGeneration, Calculate_FuelUse, TotalCO2, Totalcosts)
 end

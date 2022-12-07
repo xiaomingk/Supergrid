@@ -26,9 +26,15 @@ function readresults(model::ModelInfo, status::Symbol)
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, Charging, StorageLevel, Transmission, TransmissionCapacity, Capacity = model.vars
     @unpack demand, classlimits, hydrocapacity = model.params
     @unpack ElecDemand = model.constraints
+    @unpack HydroDemand = model.constraints
     price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     price=DataFrame(price1)
     CSV.write("price.csv",price)
+    hprice1 = AxisArray([getdual(HydroDemand)])'
+    hprice=DataFrame(hprice1)
+    CSV.write("hprice.csv",hprice)
+
+
     storagetechs = [k for k in TECH if techtype[k] == :storage]
 
     params = Dict(:demand => demand, :classlimits => classlimits, :hydrocapacity => hydrocapacity)
@@ -111,13 +117,14 @@ const CHARTTECHS = Dict(
         RGB([144,213,93]/255...),   #bioGT
         RGB([148,138,84]/255...),   #gasGT
         RGB([157,87,205]/255...)    #battery
+        RGB([68,131,208]/255...),   #hydrogenstore
     ],
 
     :labellookup => Dict(:nuclear => "nuclear", :coal => "coal", :wind => "onshore wind", :offwind => "offshore wind",
         :csp => "CSP", :pv => "PV plant", :pvroof => "PV rooftop", :gasCCGT => "gas CCGT", :bioCCGT => "bio CCGT",
-        :hydro => "hydro", :bioGT => "bio GT", :gasGT => "gas GT", :battery => "battery"),
+        :hydro => "hydro", :bioGT => "bio GT", :gasGT => "gas GT", :battery => "battery", :hydrogenstore => "hydrogen"),
 
-    :displaytechs => [:nuclear, :coal, :wind, :offwind, :csp, :pv, :pvroof, :gasCCGT, :bioCCGT, :hydro, :bioGT, :gasGT, :battery]
+    :displaytechs => [:nuclear, :coal, :wind, :offwind, :csp, :pv, :pvroof, :gasCCGT, :bioCCGT, :hydro, :bioGT, :gasGT, :battery, :hydrogenstore]
 )
 
 

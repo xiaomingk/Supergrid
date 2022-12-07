@@ -30,9 +30,9 @@ end
 function makesets(REGION, dataregions, hourinfo, options)
     @unpack datayear, regionset = options
     techdata = Dict(
-        :name => [:pv,  :pvroof, :csp,     :wind, :offwind, :hydro,    :coal,    :gasGT,   :gasCCGT, :bioGT,   :bioCCGT, :nuclear, :battery],
-        :type => [:vre, :vre,    :storage, :vre,  :vre,     :storage,  :thermal, :thermal, :thermal, :thermal, :thermal, :thermal, :storage],
-        :fuel => [:_,   :_,      :_,       :_,    :_,       :_,        :coal,    :gas,     :gas,     :biogas,  :biogas,  :uranium, :_]
+        :name => [:pv,  :pvroof, :csp,     :wind, :offwind, :hydro,    :coal,    :gasGT,   :gasCCGT, :bioGT,   :bioCCGT, :nuclear, :battery, :hydrogenstore],
+        :type => [:vre, :vre,    :storage, :vre,  :vre,     :storage,  :thermal, :thermal, :thermal, :thermal, :thermal, :thermal, :storage, :thermal],
+        :fuel => [:_,   :_,      :_,       :_,    :_,       :_,        :coal,    :gas,     :gas,     :biogas,  :biogas,  :uranium, :_ ,      :_]
     )
 
     inputdata = getdatafolder(options)
@@ -229,6 +229,7 @@ function makeparameters(sets, options, hourinfo)
         :nuclear        5000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
+        :hydrogenstore  450         0               9           30          0.68        1
         :transmission   NaN         0               NaN         40          NaN         1
         :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
         :pv             323         0               8           25          1           1
