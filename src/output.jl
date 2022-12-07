@@ -29,7 +29,7 @@ function readresults(model::ModelInfo, status::Symbol)
     price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     price=DataFrame(price1)
     CSV.write("price.csv",price)
-    hprice1 = AxisArray([getdual(HydroDemand)])'
+    hprice1 = AxisArray([getdual(HydroDemand[r]) for r in REGION])'
     hprice=DataFrame(hprice1)
     CSV.write("hprice.csv",hprice)
 
