@@ -29,9 +29,9 @@ function readresults(model::ModelInfo, status::Symbol)
     price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     price=DataFrame(price1)
     CSV.write("price.csv",price)
-    hprice1 = AxisArray([getdual(HydroDemand)])'
-    hprice=DataFrame(hprice1)
-    CSV.write("hprice.csv",hprice)
+    #hprice1 = AxisArray([getdual(HydroDemand)])'
+    #hprice=DataFrame(hprice1)
+    #CSV.write("hprice.csv",hprice)
 
 
     storagetechs = [k for k in TECH if techtype[k] == :storage]
