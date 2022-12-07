@@ -110,9 +110,6 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
                 + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) -
                 (1 + 1 / efficiency[:hydrogenstore]) * Electricity[r,:hydrogenstore,:_,h] >=
                     demand[r,h] * hoursperperiod
-                    
-        HydroDemand[r in REGION, h in HOUR],
-            Electricity[r,:hydrogenstore,:_,h] >= demand[r,h] * hoursperperiod * 0.1
 
         # <= instead of == to avoid need of slack variable to deal with spillage during spring floods, etc
         StorageBalance[r in REGION, k in storagetechs, sc in STORAGECLASS[k], h in HOUR],
@@ -153,13 +150,16 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             TransmissionCapacity[r1,r2] == 0
 
         Calculate_AnnualGeneration[r in REGION, k in TECH],
-            AnnualGeneration[r,k] == sum(Electricity[r,k,c,h] for c in CLASS[k], h in HOUR) + (1 / efficiency[:hydrogenstore] - 1) * sum(Electricity[r,:hydrogenstore,:_,h] for h in HOUR)
+            AnnualGeneration[r,k] == sum(Electricity[r,k,c,h] for c in CLASS[k], h in HOUR)
 
         Calculate_FuelUse[r in REGION, f in FUEL; f != :_],
             FuelUse[r,f] == sum(AnnualGeneration[r,k]/efficiency[k] for k in TECH if techfuel[k]==f)
 
         BioLimit[r in REGION],
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
+
+        HydroDemand[r in REGION],
+            sum(AnnualGeneration[r,k] for k in [:hydrogenstore]) == 0.05 * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         # This does not quite make the variable bound redundant, because e.g. some pixels in PV class 1 are class "0" for CSP,
         # and are therefore unaffected by this constraint.
