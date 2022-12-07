@@ -159,7 +159,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         HydroDemand[r in REGION],
-            sum(AnnualGeneration[r,k] for k in [:hydrogenstore]) == 0.05 * sum(demand[r,h] for h in HOUR) * hoursperperiod
+            sum(AnnualGeneration[r,k] for k in [:hydrogenstore]) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         # This does not quite make the variable bound redundant, because e.g. some pixels in PV class 1 are class "0" for CSP,
         # and are therefore unaffected by this constraint.

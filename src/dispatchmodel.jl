@@ -99,7 +99,7 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         HydroDemand[r in REGION],
-            sum(AnnualGeneration[r,k] for k in [:hydrogenstore]) == 0.05 * sum(demand[r,h] for h in HOUR) * hoursperperiod
+            sum(AnnualGeneration[r,k] for k in [:hydrogenstore]) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         TotalCO2[r in REGION],
             CO2emissions[r] == sum(FuelUse[r,f] * emissionsCO2[f] for f in FUEL)
