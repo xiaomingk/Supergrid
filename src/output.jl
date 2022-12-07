@@ -25,8 +25,7 @@ function readresults(model::ModelInfo, status::Symbol)
     @unpack REGION, TECH, CLASS, HOUR, techtype, STORAGECLASS = model.sets
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, Charging, StorageLevel, Transmission, TransmissionCapacity, Capacity = model.vars
     @unpack demand, classlimits, hydrocapacity = model.params
-    @unpack ElecDemand = model.constraints
-    @unpack HydroDemand = model.constraints
+    @unpack ElecDemand, HydroDemand  = model.constraints
     price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     price=DataFrame(price1)
     CSV.write("price.csv",price)
