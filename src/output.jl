@@ -116,9 +116,9 @@ const CHARTTECHS = Dict(
         RGB([144,213,93]/255...),   #bioGT
         RGB([148,138,84]/255...),   #gasGT
         RGB([157,87,205]/255...),    #battery
-        RGB([68,131,208]/255...),   #electrolyzer
-        RGB([214,64,64]/255...),    #hydrogen
-        RGB([255,255,64]/255...),   #fuelcell
+        RGB([0,255,255]/255...),   #electrolyzer
+        RGB([0,0,255]/255...),    #hydrogen
+        RGB([0,255,0]/255...),   #fuelcell
     ],
 
     :labellookup => Dict(:nuclear => "nuclear", :coal => "coal", :wind => "onshore wind", :offwind => "offshore wind",
