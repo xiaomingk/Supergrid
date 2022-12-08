@@ -106,7 +106,7 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
             Charging[r,:hydrogen,h] <= Electricity[r,:electrolyzer,:_,h]
 
         HydrogenOUT[r in REGION, h in HOUR],
-            Electricity[r,:hydorgen,:_,h] <= Capacity[r,:fuelcell, :_] * hoursperperiod
+            Electricity[r,:hydrogen,:_,h] <= Capacity[r,:fuelcell, :_] * hoursperperiod
 
         Fuelcell[r in REGION, h in HOUR],
             Capacity[r,:fuelcell,:_] == Capacity[r,:hydrogen,:_] / 168
