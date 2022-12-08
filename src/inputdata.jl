@@ -231,8 +231,8 @@ function makeparameters(sets, options, hourinfo)
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
         :electrolyzer   450         0               9           30          0.68        1
-        :hydrogen       10          0               0.5         30          0.5         1
-        :fuelcell       300         0               55          10          0.5         1
+        :hydrogen       8           0               0.5         30          0.5         1
+        :fuelcell       50          0               55          10          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
         :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
         :pv             323         0               8           25          1           1
