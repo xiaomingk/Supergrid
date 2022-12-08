@@ -76,7 +76,8 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
     @constraints m begin
         ElecDemand[r in REGION, h in HOUR],
             sum(Electricity[r,k,c,h] for k in TECH, c in CLASS[k]) - sum(Charging[r,k,h] for k in TECH if techtype[k] == :storage) +
-                + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) - (1 + 1 / efficiency[:hydrogenstore]) * Electricity[r,:hydrogenstore,:_,h] >=
+                + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) -
+                (1 + 1 / efficiency[:electrolyzer]) * Electricity[r,:electrolyzer,:_,h] + Charging[r,:hydrogen,h] - Electricity[r,:hydorgen,:_,h] >=
                     demand[r,h] * hoursperperiod
 
         # <= instead of == to avoid need of slack variable to deal with spillage during spring floods, etc
@@ -99,7 +100,19 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         HydroDemand[r in REGION],
-            sum(AnnualGeneration[r,k] for k in [:hydrogenstore]) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
+            sum(AnnualGeneration[r,k] for k in [:electrolyzer]) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
+
+        HydrogenIN[r in REGION, h in HOUR],
+            Charging[r,:hydrogen,h] <= Electricity[r,:electrolyzer,:_,h]
+
+        HydrogenOUT[r in REGION, h in HOUR],
+            Electricity[r,:hydorgen,:_,h] <= Capacity[r,:fuelcell, :_] * hoursperperiod
+
+        Fuelcell[r in REGION, h in HOUR],
+            Capacity[r,:fuelcell,:_] == Capacity[r,:hydrogen,:_] / 168
+
+        FuelcellOUT[r in REGION, h in HOUR],
+            Electricity[r,:fuelcell,:_,h] == Electricity[r,:hydorgen,:_,h]
 
         TotalCO2[r in REGION],
             CO2emissions[r] == sum(FuelUse[r,f] * emissionsCO2[f] for f in FUEL)
@@ -138,6 +151,6 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
     end
 
     return Constraints(nothing, ElecDemand, HydroDemand, RampingDown, RampingUp, StorageBalance, nothing, nothing,
-                nothing, nothing, nothing, nothing, nothing,
+                nothing, nothing, nothing, nothing, nothing,, nothing, nothing, nothing, nothing,
                 Calculate_AnnualGeneration, Calculate_FuelUse, TotalCO2, Totalcosts)
 end

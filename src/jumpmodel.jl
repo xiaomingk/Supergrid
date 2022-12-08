@@ -108,7 +108,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
         ElecDemand[r in REGION, h in HOUR],
             sum(Electricity[r,k,c,h] for k in TECH, c in CLASS[k]) - sum(Charging[r,k,h] for k in TECH if techtype[k] == :storage) +
                 + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) -
-                (1 + 1 / efficiency[:hydrogenstore]) * Electricity[r,:hydrogenstore,:_,h] >=
+                (1 + 1 / efficiency[:electrolyzer]) * Electricity[r,:electrolyzer,:_,h] + Charging[r,:hydrogen,h] - Electricity[r,:hydorgen,:_,h] >=
                     demand[r,h] * hoursperperiod
 
         # <= instead of == to avoid need of slack variable to deal with spillage during spring floods, etc
@@ -140,6 +140,9 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
         ChargingNeedsBattery[r in REGION, h in HOUR],
             Charging[r,:battery,h] <= Capacity[r,:battery, :_] * hoursperperiod
 
+        ChargingNeedsHydrogen[r in REGION, h in HOUR],
+            Charging[r,:hydrogen,h] <= Capacity[r,:hydrogen, :_] * hoursperperiod
+
         MaxTransmissionCapacity[r1 in REGION, r2 in REGION, h in HOUR],
             Transmission[r1,r2,h] <= TransmissionCapacity[r1,r2] * hoursperperiod
 
@@ -159,7 +162,21 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         HydroDemand[r in REGION],
-            sum(AnnualGeneration[r,k] for k in [:hydrogenstore]) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
+            sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
+
+        HydrogenIN[r in REGION, h in HOUR],
+            Charging[r,:hydrogen,h] <= Electricity[r,:electrolyzer,:_,h]
+
+        HydrogenOUT[r in REGION, h in HOUR],
+            Electricity[r,:hydorgen,:_,h] <= Capacity[r,:fuelcell, :_] * hoursperperiod
+
+        Fuelcell[r in REGION, h in HOUR],
+            Capacity[r,:fuelcell,:_] == Capacity[r,:hydrogen,:_] / 168
+
+        FuelcellOUT[r in REGION, h in HOUR],
+            Electricity[r,:fuelcell,:_,h] == Electricity[r,:hydorgen,:_,h]
+
+
 
         # This does not quite make the variable bound redundant, because e.g. some pixels in PV class 1 are class "0" for CSP,
         # and are therefore unaffected by this constraint.
@@ -220,7 +237,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
 
     return Constraints(ElecCapacity, ElecDemand, HydroDemand, RampingDown, RampingUp, StorageBalance, MaxStorageCapacity, InitialStorageLevel,
                 MaxTransmissionCapacity, TwoWayStreet, NoTransmission, NoCharging, ChargingNeedsBattery,
-                Calculate_AnnualGeneration, Calculate_FuelUse, TotalCO2, Totalcosts)
+                Calculate_AnnualGeneration, Calculate_FuelUse, TotalCO2, Totalcosts, ChargingNeedsHydrogen, HydrogenIN, HydrogenOUT, Fuelcell, FuelcellOUT)
 end
 
 function makeobjective(m, sets, vars)

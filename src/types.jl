@@ -75,6 +75,11 @@ struct Constraints
     Calculate_FuelUse
     TotalCO2
     Totalcosts
+    ChargingNeedsHydrogen
+    HydrogenIN
+    HydrogenOUT
+    Fuelcell
+    FuelcellOUT
 end
 
 struct HourSampling

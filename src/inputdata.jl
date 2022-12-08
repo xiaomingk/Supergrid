@@ -30,9 +30,9 @@ end
 function makesets(REGION, dataregions, hourinfo, options)
     @unpack datayear, regionset = options
     techdata = Dict(
-        :name => [:pv,  :pvroof, :csp,     :wind, :offwind, :hydro,    :coal,    :gasGT,   :gasCCGT, :bioGT,   :bioCCGT, :nuclear, :battery, :hydrogenstore],
-        :type => [:vre, :vre,    :storage, :vre,  :vre,     :storage,  :thermal, :thermal, :thermal, :thermal, :thermal, :thermal, :storage, :thermal],
-        :fuel => [:_,   :_,      :_,       :_,    :_,       :_,        :coal,    :gas,     :gas,     :biogas,  :biogas,  :uranium, :_ ,      :_]
+        :name => [:pv,  :pvroof, :csp,     :wind, :offwind, :hydro,    :coal,    :gasGT,   :gasCCGT, :bioGT,   :bioCCGT, :nuclear, :battery, :electrolyzer, :hydrogen, :fuelcell],
+        :type => [:vre, :vre,    :storage, :vre,  :vre,     :storage,  :thermal, :thermal, :thermal, :thermal, :thermal, :thermal, :storage, :thermal,      :storage,   :thermal],
+        :fuel => [:_,   :_,      :_,       :_,    :_,       :_,        :coal,    :gas,     :gas,     :biogas,  :biogas,  :uranium, :_ ,      :_,            :_,               :_]
     )
 
     inputdata = getdatafolder(options)
@@ -134,7 +134,7 @@ function makeparameters(sets, options, hourinfo)
     hydroeleccost = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
     monthlyinflow = AxisArray(zeros(numregions,nhydro,12), REGION, CLASS[:hydro], 1:12)
     cfhydroinflow = AxisArray(zeros(numregions,nhydro,nhours), REGION, CLASS[:hydro], HOUR)
-    dischargetime = AxisArray(zeros(numregions,3,1+nhydro+nclasses), REGION, [:hydro,:battery,:csp], [CLASS[:hydro]; CLASS[:csp]; :_])
+    dischargetime = AxisArray(zeros(numregions,4,1+nhydro+nclasses+1), REGION, [:hydro,:battery,:csp,:hydrogen], [CLASS[:hydro]; CLASS[:csp]; :_; :_])
 
     hydrocapacity[:,:x0] = typeof(hydrovars["existingcapac"]) == Float64 ? [hydrovars["existingcapac"]] : hydrovars["existingcapac"][activeregions]
     hydrocapacity[:,2:end] = reshape(hydrovars["potentialcapac"][activeregions,:,:], numregions, nhydro-1)
@@ -166,6 +166,7 @@ function makeparameters(sets, options, hourinfo)
     dischargetime[:,:hydro,2:end-1-nclasses] = reshape(hydrovars["potentialmeandischargetime"][activeregions,:,:], numregions, nhydro-1)
 
     dischargetime[:,:battery,:_] .= 1
+    dischargetime[:,:hydrogen,:_] .= 1
     dischargetime[:,:csp,:] .= cspthermalstoragehours
     dischargetime[isnan.(dischargetime)] = fill(10000, sum(isnan.(dischargetime)))
     dischargetime[dischargetime .> 10000] = fill(10000, sum(dischargetime .> 10000))
@@ -229,7 +230,9 @@ function makeparameters(sets, options, hourinfo)
         :nuclear        5000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
-        :hydrogenstore  450         0               9           30          0.68        1
+        :electrolyzer   450         0               9           30          0.68        1
+        :hydrogen       45          0               0.5         30          0.5           1
+        :fuelcell       1100        0               55          10          0.5       1
         :transmission   NaN         0               NaN         40          NaN         1
         :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
         :pv             323         0               8           25          1           1
