@@ -134,7 +134,7 @@ function makeparameters(sets, options, hourinfo)
     hydroeleccost = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
     monthlyinflow = AxisArray(zeros(numregions,nhydro,12), REGION, CLASS[:hydro], 1:12)
     cfhydroinflow = AxisArray(zeros(numregions,nhydro,nhours), REGION, CLASS[:hydro], HOUR)
-    dischargetime = AxisArray(zeros(numregions,3,1+nhydro+nclasses), REGION, [:hydro,:battery,:csp,:hydrogen], [CLASS[:hydro]; CLASS[:csp]; :_; :_])
+    dischargetime = AxisArray(zeros(numregions,4,2+nhydro+nclasses), REGION, [:hydro,:battery,:csp,:hydrogen], [CLASS[:hydro]; CLASS[:csp]; :_; :_])
 
     hydrocapacity[:,:x0] = typeof(hydrovars["existingcapac"]) == Float64 ? [hydrovars["existingcapac"]] : hydrovars["existingcapac"][activeregions]
     hydrocapacity[:,2:end] = reshape(hydrovars["potentialcapac"][activeregions,:,:], numregions, nhydro-1)
@@ -163,7 +163,7 @@ function makeparameters(sets, options, hourinfo)
     # these countries have mostly run-of-river hydro so discharge times are lower
     dischargetime[intersect([:GER,:UK,:BAL],REGION),:hydro,:x0] .= 300
     # use the GIS data for discharge time for future hydro
-    dischargetime[:,:hydro,2:end-1-nclasses] = reshape(hydrovars["potentialmeandischargetime"][activeregions,:,:], numregions, nhydro-1)
+    dischargetime[:,:hydro,2:nhydro] = reshape(hydrovars["potentialmeandischargetime"][activeregions,:,:], numregions, nhydro-1)
 
     dischargetime[:,:battery,:_] .= 1
     dischargetime[:,:hydrogen,:_] .= 1
@@ -231,8 +231,8 @@ function makeparameters(sets, options, hourinfo)
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1
         :electrolyzer   450         0               9           30          0.68        1
-        :hydrogen       45          0               0.5         30          0.5           1
-        :fuelcell       1100        0               55          10          0.5       1
+        :hydrogen       45          0               0.5         30          0.5         1
+        :fuelcell       1100        0               55          10          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
         :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
         :pv             323         0               8           25          1           1
