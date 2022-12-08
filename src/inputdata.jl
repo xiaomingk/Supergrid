@@ -134,7 +134,7 @@ function makeparameters(sets, options, hourinfo)
     hydroeleccost = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
     monthlyinflow = AxisArray(zeros(numregions,nhydro,12), REGION, CLASS[:hydro], 1:12)
     cfhydroinflow = AxisArray(zeros(numregions,nhydro,nhours), REGION, CLASS[:hydro], HOUR)
-    dischargetime = AxisArray(zeros(numregions,4,2+nhydro+nclasses), REGION, [:hydro,:battery,:csp,:hydrogen], [CLASS[:hydro]; CLASS[:csp]; :_; :_])
+    dischargetime = AxisArray(zeros(numregions,3,1+nhydro+nclasses), REGION, [:hydro,:battery,:csp,:hydrogen], [CLASS[:hydro]; CLASS[:csp]; :_; :_])
 
     hydrocapacity[:,:x0] = typeof(hydrovars["existingcapac"]) == Float64 ? [hydrovars["existingcapac"]] : hydrovars["existingcapac"][activeregions]
     hydrocapacity[:,2:end] = reshape(hydrovars["potentialcapac"][activeregions,:,:], numregions, nhydro-1)
