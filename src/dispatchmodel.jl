@@ -151,6 +151,6 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
     end
 
     return Constraints(nothing, ElecDemand, HydroDemand, RampingDown, RampingUp, StorageBalance, nothing, nothing,
-                nothing, nothing, nothing, nothing, nothing,, nothing, nothing, nothing, nothing,
+                nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing,
                 Calculate_AnnualGeneration, Calculate_FuelUse, TotalCO2, Totalcosts)
 end
