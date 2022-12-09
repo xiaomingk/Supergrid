@@ -232,12 +232,12 @@ function makeparameters(sets, options, hourinfo)
         :offwind        1700        0               55          25          1           1
         :electrolyzer   50          0               1           30          0.68        1
         :hydrogen       8           0               0.5         30          0.5         1
-        :fuelcell       50          0               1          10          0.5         1
+        :fuelcell       50          0               1           30          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
         :battery        316         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
         :pv             323         0               8           25          1           1
         :pvroof         423         0               6           25          1           1
-        :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours
+        :csp            6746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours
         :hydro          10          0               0           80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
     ]
     techs = techtable[:,1]
