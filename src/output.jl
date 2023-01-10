@@ -42,7 +42,7 @@ function readresults(model::ModelInfo, status::Symbol)
 
     params = Dict(:demand => demand, :classlimits => classlimits, :hydrocapacity => hydrocapacity)
 
-    cost1= AxisArray(getvalue(Systemcost))/sum(demand)*1000
+    cost1= AxisArray(getvalue(Systemcost))'/sum(demand)*1000
     cost2= DataFrame(cost1)
     CSV.write("cost_$region3.csv",cost2)
 
