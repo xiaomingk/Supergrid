@@ -42,11 +42,11 @@ function readresults(model::ModelInfo, status::Symbol)
 
     params = Dict(:demand => demand, :classlimits => classlimits, :hydrocapacity => hydrocapacity)
 
-    cost1= sum(getvalue(Systemcost))/sum(demand)*1000
-    cost=DataFrame(cost1)
-    CSV.write("cost_$region3.csv",cost)
+    cost1= AxisArray(getvalue(Systemcost))/sum(demand)*1000
+    cost2= DataFrame(cost1)
+    CSV.write("cost_$region3.csv",cost2)
 
-
+    cost = AxisArray(getvalue(Systemcost))
     emis = AxisArray(getvalue(CO2emissions))
     fuel = AxisArray(getvalue(FuelUse))
     # getting Electricity for all set combos is slowest, so let's optimize storage format and use faster internal function call
