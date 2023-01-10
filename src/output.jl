@@ -31,7 +31,8 @@ function readresults(model::ModelInfo, status::Symbol)
     region1=strip("$REGION", '[')
     region2=strip("$region1", ':')
     region3=strip("$region2", ']')
-    CSV.write("$(region3)_price.csv",price)
+
+
     hprice1 = AxisArray([getdual(HydroDemand[r]) for r in REGION])'
     hprice=DataFrame(hprice1)
     CSV.write("$(region3)_hprice.csv",hprice)
@@ -41,7 +42,11 @@ function readresults(model::ModelInfo, status::Symbol)
 
     params = Dict(:demand => demand, :classlimits => classlimits, :hydrocapacity => hydrocapacity)
 
-    cost = AxisArray(getvalue(Systemcost))
+    cost = sum(getvalue(Systemcost))/sum(demand)*1000
+    cost1=DataFrame(cost)
+    CSV.write("$(region3)_cost.csv",cost1)
+
+
     emis = AxisArray(getvalue(CO2emissions))
     fuel = AxisArray(getvalue(FuelUse))
     # getting Electricity for all set combos is slowest, so let's optimize storage format and use faster internal function call
