@@ -28,7 +28,8 @@ function readresults(model::ModelInfo, status::Symbol)
     @unpack ElecDemand, HydroDemand  = model.constraints
     price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     price=DataFrame(price1)
-    CSV.write("$(REGION)_price.csv",price)
+    region=strip("$REGION", [':'])
+    CSV.write("$(region)_price.csv",price)
     hprice1 = AxisArray([getdual(HydroDemand[r]) for r in REGION])'
     hprice=DataFrame(hprice1)
     CSV.write("$(REGION)_hprice.csv",hprice)
