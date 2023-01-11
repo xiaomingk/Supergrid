@@ -28,14 +28,18 @@ function readresults(model::ModelInfo, status::Symbol)
     @unpack ElecDemand, HydroDemand  = model.constraints
     price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     price=DataFrame(price1)
-    CSV.write("price_$REGION.csv",price)
+    region1=strip("$REGION", '[')
+    region2=strip("$region1", ':')
+    region3=strip("$region2", ']')
+    region4=chop(region3; head=1, tail=1)
+    CSV.write("price_$(region4).csv",price)
     averageprice1=(demand*price1)'/sum(demand)
     averageprice2= DataFrame(averageprice1)
-    #CSV.write("aprice_$(region3).csv",averageprice2)
+    CSV.write("aprice_$(region4).csv",averageprice2)
 
     hprice1 = AxisArray([getdual(HydroDemand[r]) for r in REGION])'
     hprice=DataFrame(hprice1)
-    #CSV.write("hprice_$(region3).csv",hprice)
+    CSV.write("hprice_$(region4).csv",hprice)
 
 
     storagetechs = [k for k in TECH if techtype[k] == :storage]
