@@ -162,7 +162,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         HydroDemand[r in REGION],
-            sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == 0.6 * sum(demand[r,h] for h in HOUR) * hoursperperiod
+            sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == 0.7 * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         HydrogenIN[r in REGION, h in HOUR],
             Charging[r,:hydrogen,h] <= Electricity[r,:electrolyzer,:_,h]
