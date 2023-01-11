@@ -48,7 +48,7 @@ function readresults(model::ModelInfo, status::Symbol)
 
     cost1= AxisArray(getvalue(Systemcost))'/sum(demand)*1000
     cost2= DataFrame(cost1)
-    CSV.write("cost_$region3.csv",cost2)
+    CSV.write("cost_$region4.csv",cost2)
 
     cost = AxisArray(getvalue(Systemcost))
     emis = AxisArray(getvalue(CO2emissions))
