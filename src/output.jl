@@ -31,11 +31,11 @@ function readresults(model::ModelInfo, status::Symbol)
     CSV.write("price_$REGION.csv",price)
     averageprice1=(demand*price1)'/sum(demand)
     averageprice2= DataFrame(averageprice1)
-    CSV.write("aprice_$(region3).csv",averageprice2)
+    #CSV.write("aprice_$(region3).csv",averageprice2)
 
     hprice1 = AxisArray([getdual(HydroDemand[r]) for r in REGION])'
     hprice=DataFrame(hprice1)
-    CSV.write("hprice_$(region3).csv",hprice)
+    #CSV.write("hprice_$(region3).csv",hprice)
 
 
     storagetechs = [k for k in TECH if techtype[k] == :storage]
