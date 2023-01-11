@@ -31,14 +31,14 @@ function readresults(model::ModelInfo, status::Symbol)
     region1=strip("$REGION", '[')
     region2=strip("$region1", ':')
     region3=strip("$region2", ']')
-    CSV.write("price_$($region3).csv",price)
+    CSV.write("price_$(region3).csv",price)
     averageprice1=(demand*price1)'/sum(demand)
     averageprice2= DataFrame(averageprice1)
-    CSV.write("aprice_$($region3).csv",averageprice2)
+    CSV.write("aprice_$(region3).csv",averageprice2)
 
     hprice1 = AxisArray([getdual(HydroDemand[r]) for r in REGION])'
     hprice=DataFrame(hprice1)
-    CSV.write("hprice_$($region3).csv",hprice)
+    CSV.write("hprice_$(region3).csv",hprice)
 
 
     storagetechs = [k for k in TECH if techtype[k] == :storage]
