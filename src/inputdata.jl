@@ -238,7 +238,7 @@ function makeparameters(sets, options, hourinfo)
         :pv             323         0               8           25          1           1
         :pvroof         423         0               6           25          1           1
         :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours
-        :hydro          10          0               0           80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
+        :hydro          2000        0               25          80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
     ]
     techs = techtable[:,1]
     numtechs=length(techs)
