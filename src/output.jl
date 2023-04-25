@@ -25,7 +25,7 @@ function readresults(model::ModelInfo, status::Symbol)
     @unpack REGION, TECH, CLASS, HOUR, techtype, STORAGECLASS = model.sets
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, Charging, StorageLevel, Transmission, TransmissionCapacity, Capacity = model.vars
     @unpack demand, classlimits, hydrocapacity = model.params
-    @unpack ElecDemand, HydroDemand  = model.constraints
+    @unpack ElecDemand, HydrogenDemand  = model.constraints
     price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     price=DataFrame(price1)
     region1=strip("$REGION", '[')
@@ -38,7 +38,7 @@ function readresults(model::ModelInfo, status::Symbol)
     averageprice2= DataFrame(averageprice1)
     #CSV.write("aprice_$(region4).csv",averageprice2)
     CSV.write("aprice_$(region3).csv",averageprice2)
-    hprice1 = AxisArray([getdual(HydroDemand[r]) for r in REGION])'
+    hprice1 = AxisArray([getdual(HydrogenDemand[r]) for r in REGION])'
     hprice=DataFrame(hprice1)
     #CSV.write("hprice_$(region4).csv",hprice)
     CSV.write("hprice_$(region3).csv",hprice)
@@ -132,15 +132,16 @@ const CHARTTECHS = Dict(
         RGB([157,87,205]/255...),    #battery
         RGB([0,255,255]/255...),   #electrolyzer
         RGB([0,0,255]/255...),    #hydrogen
+        RGB([119,0,200]/255...),    #demandresponse
         RGB([0,255,0]/255...),   #fuelcell
     ],
 
     :labellookup => Dict(:nuclear => "nuclear", :coal => "coal", :wind => "onshore wind", :offwind => "offshore wind",
         :csp => "CSP", :pv => "PV plant", :pvroof => "PV rooftop", :gasCCGT => "gas CCGT", :bioCCGT => "bio CCGT",
-        :hydro => "hydro", :bioGT => "bio GT", :gasGT => "gas GT", :battery => "battery", :electrolyzer => "electrolyzer",
+        :hydro => "hydro", :bioGT => "bio GT", :gasGT => "gas GT", :demandresponse => "demand response", :battery => "battery", :electrolyzer => "electrolyzer",
         :hydrogen => "hydrogen", :fuelcell => "fuelcell"),
 
-    :displaytechs => [:nuclear, :coal, :wind, :offwind, :csp, :pv, :pvroof, :gasCCGT, :bioCCGT, :hydro, :bioGT, :gasGT, :battery, :electrolyzer, :hydrogen, :fuelcell]
+    :displaytechs => [:nuclear, :coal, :wind, :offwind, :csp, :pv, :pvroof, :gasCCGT, :bioCCGT, :hydro, :bioGT, :gasGT, :demandresponse, :battery, :electrolyzer, :hydrogen, :fuelcell]
 )
 
 

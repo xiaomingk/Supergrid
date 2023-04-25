@@ -30,9 +30,9 @@ end
 function makesets(REGION, dataregions, hourinfo, options)
     @unpack datayear, regionset = options
     techdata = Dict(
-        :name => [:pv,  :pvroof, :csp,     :wind, :offwind, :hydro,    :coal,    :gasGT,   :gasCCGT, :bioGT,   :bioCCGT, :nuclear, :battery, :electrolyzer, :hydrogen, :fuelcell],
-        :type => [:vre, :vre,    :storage, :vre,  :vre,     :storage,  :thermal, :thermal, :thermal, :thermal, :thermal, :thermal, :storage, :thermal,      :storage,   :thermal],
-        :fuel => [:_,   :_,      :_,       :_,    :_,       :_,        :coal,    :gas,     :gas,     :biogas,  :biogas,  :uranium, :_ ,      :_,            :_,               :_]
+        :name => [:pv,  :pvroof, :csp,     :wind, :offwind, :hydro,    :demandresponse,  :coal,    :gasGT,   :gasCCGT, :bioGT,   :bioCCGT, :nuclear, :battery, :electrolyzer, :hydrogen, :fuelcell],
+        :type => [:vre, :vre,    :storage, :vre,  :vre,     :storage,  :thermal,         :thermal, :thermal, :thermal, :thermal, :thermal, :thermal, :storage, :thermal,      :storage,   :thermal],
+        :fuel => [:_,   :_,      :_,       :_,    :_,       :_,        :_,               :coal,    :gas,     :gas,     :biogas,  :biogas,  :uranium, :_ ,      :_,            :_,               :_]
     )
 
     inputdata = getdatafolder(options)
@@ -227,6 +227,7 @@ function makeparameters(sets, options, hourinfo)
         :coal           1600        2               48          30          0.45        0.15
         :bioGT          500         1               10          30          0.4         1
         :bioCCGT        800         1               16          30          0.6         0.3
+        :demandresponse 0           1000            0           100         1           1
         :nuclear        5000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1
         :offwind        1700        0               55          25          1           1

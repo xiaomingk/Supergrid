@@ -60,7 +60,7 @@ end
 struct Constraints
     ElecCapacity
     ElecDemand
-    HydroDemand
+    HydrogenDemand
     RampingDown
     RampingUp
     StorageBalance

@@ -97,7 +97,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, AnnualGeneration, Charging, StorageLevel,
             Transmission, TransmissionCapacity, Capacity, SolarCapacity = vars
     @unpack hoursperperiod = hourinfo
-    @unpack carbontax, carboncap, rampingconstraints, maxbioenergy, globalnuclearlimit = options
+    @unpack carbontax, carboncap, rampingconstraints, maxbioenergy, maxdemandresponse, hydrogendemand, globalnuclearlimit = options
 
     storagetechs = [k for k in TECH if techtype[k] == :storage]
 
@@ -161,9 +161,13 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
         BioLimit[r in REGION],
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
-        HydroDemand[r in REGION],
-            #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
-            sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == 22000000
+        DemandresponseLimit[r in REGION],
+            sum(AnnualGeneration[r,k] for k in [:demandresponse]) <= maxdemandresponse * sum(demand[r,h] for h in HOUR) * hoursperperiod
+
+        HydrogenDemand[r in REGION],
+            #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod #22000000
+            sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == hydrogendemand * sum(demand[r,h] for h in HOUR) * hoursperperiod
+
         HydrogenIN[r in REGION, h in HOUR],
             Charging[r,:hydrogen,h] <= Electricity[r,:electrolyzer,:_,h]
 
@@ -235,7 +239,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
         end
     end
 
-    return Constraints(ElecCapacity, ElecDemand, HydroDemand, RampingDown, RampingUp, StorageBalance, MaxStorageCapacity, InitialStorageLevel,
+    return Constraints(ElecCapacity, ElecDemand, HydrogenDemand, RampingDown, RampingUp, StorageBalance, MaxStorageCapacity, InitialStorageLevel,
                 MaxTransmissionCapacity, TwoWayStreet, NoTransmission, NoCharging, ChargingNeedsBattery,
                 Calculate_AnnualGeneration, Calculate_FuelUse, TotalCO2, Totalcosts, ChargingNeedsHydrogen, HydrogenIN, HydrogenOUT, Fuelcell, FuelcellOUT)
 end
