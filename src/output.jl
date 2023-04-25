@@ -132,7 +132,7 @@ const CHARTTECHS = Dict(
         RGB([157,87,205]/255...),    #battery
         RGB([0,255,255]/255...),   #electrolyzer
         RGB([0,0,255]/255...),    #hydrogen
-        RGB([119,0,200]/255...),    #demandresponse
+        RGB([228,0,120]/255...),    #demandresponse
         RGB([0,255,0]/255...),   #fuelcell
     ],
 
