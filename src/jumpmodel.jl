@@ -110,7 +110,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
                 + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) -
                 (1 + 1 / efficiency[:electrolyzer]) * Electricity[r,:electrolyzer,:_,h] + Charging[r,:hydrogen,h] - Electricity[r,:hydrogen,:_,h] >=
                     demand[r,h] * hoursperperiod
-
+        # Electrolyzer first generate electricity in Electriicty category, also consume electricity, first plus then minus, then minus the corresponding electricity demand.
         # <= instead of == to avoid need of slack variable to deal with spillage during spring floods, etc
         StorageBalance[r in REGION, k in storagetechs, sc in STORAGECLASS[k], h in HOUR],
             (StorageLevel[r,k,sc,h] - StorageLevel[r,k,sc, (h>1) ? h-1 : length(HOUR)]) / 1 <=  # unit: energy diff per period (TWh/period)
