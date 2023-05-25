@@ -230,7 +230,7 @@ function makeparameters(sets, options, hourinfo)
         :demandresponse 0           1000            0           100         1           1
         :nuclear        5000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1
-        :offwind        1700        0               55          25          1           1
+        :offwind        1500        0               55          25          1           1
         :electrolyzer   250         0               5           25          0.66        1
         :hydrogen       11          0               0           20          0.5         1
         :fuelcell       800         0               40          10          0.5         1
