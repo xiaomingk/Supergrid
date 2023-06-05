@@ -104,6 +104,7 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
 
         HydrogenDemand[r in REGION],
            #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
+           #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == hydrogendemand * sum(demand[r,h] for h in HOUR) * hoursperperiod
             sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == hydrogendemand * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         HydrogenIN[r in REGION, h in HOUR],
