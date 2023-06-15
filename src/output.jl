@@ -31,17 +31,17 @@ function readresults(model::ModelInfo, status::Symbol)
     region1=strip("$REGION", '[')
     region2=strip("$region1", ':')
     region3=strip("$region2", ']')
-    region4=chop(region3; head=8, tail=2)
-    CSV.write("price_$(region4).csv",price)
-    #CSV.write("price_$(region3).csv",price)
+    #region4=chop(region3; head=8, tail=2)
+    #CSV.write("price_$(region4).csv",price)
+    CSV.write("price_$(region3).csv",price)
     averageprice1=(demand*price1)'/sum(demand)
     averageprice2= DataFrame(averageprice1)
-    CSV.write("aprice_$(region4).csv",averageprice2)
-    #CSV.write("aprice_$(region3).csv",averageprice2)
+    #CSV.write("aprice_$(region4).csv",averageprice2)
+    CSV.write("aprice_$(region3).csv",averageprice2)
     hprice1 = AxisArray([getdual(HydrogenDemand[r]) for r in REGION])'
     hprice=DataFrame(hprice1)
-    CSV.write("hprice_$(region4).csv",hprice)
-    #CSV.write("hprice_$(region3).csv",hprice)
+    #CSV.write("hprice_$(region4).csv",hprice)
+    CSV.write("hprice_$(region3).csv",hprice)
 
     storagetechs = [k for k in TECH if techtype[k] == :storage]
 
@@ -49,8 +49,8 @@ function readresults(model::ModelInfo, status::Symbol)
 
     cost1= AxisArray(getvalue(Systemcost))'/sum(demand)*1000
     cost2= DataFrame(cost1)
-    CSV.write("cost_$region4.csv",cost2)
-    #CSV.write("cost_$region3.csv",cost2)
+    #CSV.write("cost_$region4.csv",cost2)
+    CSV.write("cost_$region3.csv",cost2)
 
     cost = AxisArray(getvalue(Systemcost))
     emis = AxisArray(getvalue(CO2emissions))
