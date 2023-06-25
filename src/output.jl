@@ -251,7 +251,7 @@ function analyzeresults(results::Results)
 
         if plotstoragetech != :none
             regstorage = sumdimdrop(existingstoragelevel[:,[plotstoragetech],regs], dims=3, optionlist...)
-            p = plot(regstorage; size=(900,550), tickfont=16, legendfont=16, label="storage level (TWh)")
+            p = plot(regstorage; size=(1800,1000), tickfont=16, legendfont=16, label="storage level (TWh)")
             if plotstoragetech == :battery
                 plot!(regcharge/1000, label="charge (TWh/h)")
                 batteryelec = sumdimdrop([Electricity[:battery,:_][r,h] for r in REGION, h in HOUR][regs,:], dims=1) / hoursperperiod
@@ -264,7 +264,7 @@ function analyzeresults(results::Results)
         reglevel = sumdimdrop(level[:,regs], dims=2)
         # display(plot(HOUR,[regcharge regelec[:,12] reglevel],size=(1850,950)))
 
-        stackedarea(HOUR, regelec; labels=techlabels, size=(900,550), line=(0.03,1,:black), tickfont=14, legendfont=14, guidefont=14,
+        stackedarea(HOUR, regelec; labels=techlabels, size=(1800,1000), line=(0.03,1,:black), tickfont=14, legendfont=14, guidefont=14,
                                     xlabel="hour of year", ylabel="GW", yformatter=:plain, color_palette=palette, optionlist...)
         plotbatterycharge && plot!(HOUR, -regcharge, color=RGB([157,87,205]/255...))
         plotbatterylevel && plot!(HOUR, reglevel, line=(:black,:dash))
@@ -284,7 +284,7 @@ function analyzeresults(results::Results)
     return annualelec, capac, tcapac, chart
 end
 
-function chart_energymix_scenarios(scenarios, resultsnames, resultsfile; size=(900,550), options...)
+function chart_energymix_scenarios(scenarios, resultsnames, resultsfile; size=(1800,1000), options...)
     numscen = length(scenarios)
     scenelec, demands, hoursperperiod, displayorder, techlabels, palette = allscenarioresults(scenarios, resultsnames, resultsfile)
 
