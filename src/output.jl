@@ -28,9 +28,9 @@ function readresults(model::ModelInfo, status::Symbol)
     @unpack ElecDemand, HydrogenDemand  = model.constraints
     #price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     #price=DataFrame(price1)
-    region1=strip("$REGION", '[')
-    region2=strip("$region1", ':')
-    region3=strip("$region2", ']')
+    #region1=strip("$REGION", '[')
+    #region2=strip("$region1", ':')
+    #region3=strip("$region2", ']')
     #region4=chop(region3; head=8, tail=2)
     #CSV.write("price_$(region4).csv",price)
     #CSV.write("price_$(region3).csv",price)
@@ -47,10 +47,10 @@ function readresults(model::ModelInfo, status::Symbol)
 
     params = Dict(:demand => demand, :classlimits => classlimits, :hydrocapacity => hydrocapacity)
 
-    cost1= AxisArray(getvalue(Systemcost))'/sum(demand)*1000
-    cost2= DataFrame(cost1)
+    #cost1= AxisArray(getvalue(Systemcost))'/sum(demand)*1000
+    #cost2= DataFrame(cost1)
     #CSV.write("cost_$region4.csv",cost2)
-    CSV.write("cost_$region3.csv",cost2)
+    #CSV.write("cost_$region3.csv",cost2)
 
     cost = AxisArray(getvalue(Systemcost))
     emis = AxisArray(getvalue(CO2emissions))
