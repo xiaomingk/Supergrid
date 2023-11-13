@@ -181,7 +181,7 @@ function analyzeresults(results::Results)
             regcost = Systemcost ./ sum(demand, dims=1) * 1000
             avcost = sum(Systemcost) / sum(demand) * 1000
             totcost = sum(Systemcost)
-            lcoe = NamedArray(collect([regcost; avcost; totcost]'), (["system cost (€/MWh)"], [REGION; :TOTAL]))
+            lcoe = NamedArray(collect([regcost; avcost; totcost]'), (["system cost (€/MWh)"], [REGION; :AVERAGE; :TOTAL]))
             println("Regional system cost per MWh generated (€/MWh):")
             display(round.(lcoe, digits=2))
             lcost=DataFrame(lcoe)
