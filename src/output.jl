@@ -178,10 +178,10 @@ function analyzeresults(results::Results)
     function chart(country::Symbol; plotstoragetech=:none, plotbatterycharge=false, plotbatterylevel=false, optionlist...)
         if country == :BARS
             existinghydro = vec(sum(Electricity[:hydro,:x0], dims=1))
-            regcost = Systemcost ./ vec(sum(demand, dims=1)[1:end-1]) * 1000
+            #regcost = Systemcost ./ vec(sum(demand, dims=1)[1:end-1]) * 1000
             avcost = sum(Systemcost) / sum(demand) * 1000
             totcost = sum(Systemcost)
-            lcoe = NamedArray(collect([regcost; avcost; totcost]'), (["system cost (€/MWh)"], [REGION; :AVERAGE; :TOTAL]))
+            lcoe = NamedArray(collect([avcost; totcost]'), (["system cost (€/MWh)"], [:AVERAGE; :TOTAL]))
             println("Regional system cost per MWh generated (€/MWh):")
             display(round.(lcoe, digits=2))
             lcost=DataFrame(lcoe)
