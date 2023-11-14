@@ -131,7 +131,7 @@ const CHARTTECHS = Dict(
         RGB([148,138,84]/255...),   #gasGT
         RGB([157,87,205]/255...),    #battery
         RGB([0,255,255]/255...),   #electrolyzer
-        RGB([0,0,255]/255...),    #hydrogen
+        RGB([0,0,255]/255...),    #hydrogenstore
         RGB([228,0,120]/255...),    #demandresponse
         RGB([0,255,0]/255...),   #fuelcell
     ],
@@ -139,9 +139,9 @@ const CHARTTECHS = Dict(
     :labellookup => Dict(:nuclear => "nuclear", :coal => "coal", :wind => "onshore wind", :offwind => "offshore wind",
         :csp => "CSP", :pv => "PV plant", :pvroof => "PV rooftop", :gasCCGT => "gas CCGT", :bioCCGT => "bio CCGT",
         :hydro => "hydro", :bioGT => "bio GT", :gasGT => "gas GT", :demandresponse => "demand response", :battery => "battery", :electrolyzer => "electrolyzer",
-        :hydrogen => "hydrogen", :fuelcell => "fuelcell"),
+        :hydrogenstore => "hydrogen storage", :fuelcell => "fuelcell"),
 
-    :displaytechs => [:nuclear, :coal, :wind, :offwind, :csp, :pv, :pvroof, :gasCCGT, :bioCCGT, :hydro, :bioGT, :gasGT, :demandresponse, :battery, :electrolyzer, :hydrogen, :fuelcell]
+    :displaytechs => [:nuclear, :coal, :wind, :offwind, :csp, :pv, :pvroof, :gasCCGT, :bioCCGT, :hydro, :bioGT, :gasGT, :demandresponse, :battery, :electrolyzer, :hydrogenstore, :fuelcell]
 )
 
 

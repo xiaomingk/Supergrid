@@ -108,7 +108,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
         ElecDemand[r in REGION, h in HOUR],
             sum(Electricity[r,k,c,h] for k in TECH, c in CLASS[k]) - sum(Charging[r,k,h] for k in TECH if techtype[k] == :storage) +
                 + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) -
-                (1 + 1 / efficiency[:electrolyzer]) * Electricity[r,:electrolyzer,:_,h] + Charging[r,:hydrogen,h] - Electricity[r,:hydrogen,:_,h] >=
+                (1 + 1 / efficiency[:electrolyzer]) * Electricity[r,:electrolyzer,:_,h] + Charging[r,:hydrogenstore,h] - Electricity[r,:hydrogenstore,:_,h] >=
                     demand[r,h] * hoursperperiod
         # Electrolyzer first generate electricity in Electriicty category, also consume electricity, first plus then minus, then minus the corresponding electricity demand.
         # <= instead of == to avoid need of slack variable to deal with spillage during spring floods, etc
@@ -141,7 +141,7 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             Charging[r,:battery,h] <= Capacity[r,:battery, :_] * hoursperperiod
 
         ChargingNeedsHydrogen[r in REGION, h in HOUR],
-            Charging[r,:hydrogen,h] <= Capacity[r,:hydrogen, :_] * hoursperperiod
+            Charging[r,:hydrogenstore,h] <= Capacity[r,:hydrogenstore, :_] * hoursperperiod
 
         MaxTransmissionCapacity[r1 in REGION, r2 in REGION, h in HOUR],
             Transmission[r1,r2,h] <= TransmissionCapacity[r1,r2] * hoursperperiod
@@ -165,22 +165,22 @@ function makeconstraints(m, sets, params, vars, hourinfo, options)
             sum(AnnualGeneration[r,k] for k in [:demandresponse]) <= maxdemandresponse * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
         HydrogenDemand[r in REGION],
-            #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod #22000000
-            sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == hydrogendemand
-            #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogen,h] for h in HOUR) == hydrogendemand * sum(demand[r,h] for h in HOUR) * hoursperperiod
+            #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogenstore,h] for h in HOUR) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod #22000000
+            sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogenstore,h] for h in HOUR) == hydrogendemand
+            #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogenstore,h] for h in HOUR) == hydrogendemand * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
 
         HydrogenIN[r in REGION, h in HOUR],
-            Charging[r,:hydrogen,h] <= Electricity[r,:electrolyzer,:_,h]
+            Charging[r,:hydrogenstore,h] <= Electricity[r,:electrolyzer,:_,h]
 
         HydrogenOUT[r in REGION, h in HOUR],
-            Electricity[r,:hydrogen,:_,h] <= Capacity[r,:fuelcell, :_] * hoursperperiod
+            Electricity[r,:hydrogenstore,:_,h] <= Capacity[r,:fuelcell, :_] * hoursperperiod
 
         Fuelcell[r in REGION, h in HOUR],
-            Capacity[r,:fuelcell,:_] == Capacity[r,:hydrogen,:_] / 168
+            Capacity[r,:fuelcell,:_] == Capacity[r,:hydrogenstore,:_] / 168
 
         FuelcellOUT[r in REGION, h in HOUR],
-            Electricity[r,:fuelcell,:_,h] == Electricity[r,:hydrogen,:_,h]
+            Electricity[r,:fuelcell,:_,h] == Electricity[r,:hydrogenstore,:_,h]
 
 
 

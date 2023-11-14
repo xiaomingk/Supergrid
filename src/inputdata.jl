@@ -30,7 +30,7 @@ end
 function makesets(REGION, dataregions, hourinfo, options)
     @unpack datayear, regionset = options
     techdata = Dict(
-        :name => [:pv,  :pvroof, :csp,     :wind, :offwind, :hydro,    :demandresponse,  :coal,    :gasGT,   :gasCCGT, :bioGT,   :bioCCGT, :nuclear, :battery, :electrolyzer, :hydrogen, :fuelcell],
+        :name => [:pv,  :pvroof, :csp,     :wind, :offwind, :hydro,    :demandresponse,  :coal,    :gasGT,   :gasCCGT, :bioGT,   :bioCCGT, :nuclear, :battery, :electrolyzer, :hydrogenstore, :fuelcell],
         :type => [:vre, :vre,    :storage, :vre,  :vre,     :storage,  :thermal,         :thermal, :thermal, :thermal, :thermal, :thermal, :thermal, :storage, :thermal,      :storage,   :thermal],
         :fuel => [:_,   :_,      :_,       :_,    :_,       :_,        :_,               :coal,    :gas,     :gas,     :biogas,  :biogas,  :uranium, :_ ,      :_,            :_,               :_]
     )
@@ -134,7 +134,7 @@ function makeparameters(sets, options, hourinfo)
     hydroeleccost = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
     monthlyinflow = AxisArray(zeros(numregions,nhydro,12), REGION, CLASS[:hydro], 1:12)
     cfhydroinflow = AxisArray(zeros(numregions,nhydro,nhours), REGION, CLASS[:hydro], HOUR)
-    dischargetime = AxisArray(zeros(numregions,4,2+nhydro+nclasses), REGION, [:hydro,:battery,:csp,:hydrogen], [CLASS[:hydro]; CLASS[:csp]; :_; :_])
+    dischargetime = AxisArray(zeros(numregions,4,2+nhydro+nclasses), REGION, [:hydro,:battery,:csp,:hydrogenstore], [CLASS[:hydro]; CLASS[:csp]; :_; :_])
 
     hydrocapacity[:,:x0] = typeof(hydrovars["existingcapac"]) == Float64 ? [hydrovars["existingcapac"]] : hydrovars["existingcapac"][activeregions]
     hydrocapacity[:,2:end] = reshape(hydrovars["potentialcapac"][activeregions,:,:], numregions, nhydro-1)
@@ -166,7 +166,7 @@ function makeparameters(sets, options, hourinfo)
     dischargetime[:,:hydro,2:nhydro] = reshape(hydrovars["potentialmeandischargetime"][activeregions,:,:], numregions, nhydro-1)
 
     dischargetime[:,:battery,:_] .= 1
-    dischargetime[:,:hydrogen,:_] .= 1
+    dischargetime[:,:hydrogenstore,:_] .= 1
     dischargetime[:,:csp,:] .= cspthermalstoragehours
     dischargetime[isnan.(dischargetime)] = fill(10000, sum(isnan.(dischargetime)))
     dischargetime[dischargetime .> 10000] = fill(10000, sum(dischargetime .> 10000))
@@ -204,7 +204,7 @@ function makeparameters(sets, options, hourinfo)
 
     # from Bogdanov & Breyer (2016) "North-East Asian Super Grid..."
     transmissioncostdata = connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 0.47*distances)
-    transmissionfixedcostdata = connected .* (3 .+ 0.008*distances) .+ connectedoffshore .* (3 .+ 0.001645*distances)
+    transmissionfixedcostdata = connected .* (0.008*distances) .+ connectedoffshore .* (0.00165*distances)
     transmissioninvestcost = AxisArray(transmissioncostdata, REGION, REGION)        # €/kW
     transmissionfixedcost = AxisArray(transmissionfixedcostdata, REGION, REGION)        # €/kW
     transmissionlossdata = (connected .| connectedoffshore) .* (0.014 .+ 0.016*distances/1000)
@@ -232,7 +232,7 @@ function makeparameters(sets, options, hourinfo)
         :wind           825         0               33          25          1           1
         :offwind        1500        0               55          25          1           1
         :electrolyzer   250         0               5           25          0.66        1
-        :hydrogen       11          0               0           20          0.5         1
+        :hydrogenstore  11          0               0           20          0.5         1
         :fuelcell       800         0               40          10          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
         :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
