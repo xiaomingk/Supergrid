@@ -123,7 +123,7 @@ function makeparameters(sets, options, hourinfo)
 
 
     # read synthetic demand data (in UTC)
-    gisdemand = JLD.load(joinpath(inputdata,
+    gisdemand = 2*JLD.load(joinpath(inputdata,
         "SyntheticDemand_$(regionset)_$sspscenario-$(sspyear)_$datayear.jld"), "demand")
     for i = 1:numregions
         demand[i,:] = reducehours(gisdemand[:,i], 1, hourinfo) / 1000       # GW
