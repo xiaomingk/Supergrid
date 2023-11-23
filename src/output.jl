@@ -24,7 +24,7 @@ getdict(jd::JuMP.JuMPDict) = jd.tupledict
 function readresults(model::ModelInfo, status::Symbol)
     @unpack REGION, TECH, CLASS, HOUR, techtype, STORAGECLASS = model.sets
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, Charging, StorageLevel, Transmission, TransmissionCapacity, Capacity = model.vars
-    @unpack demand, classlimits, hydrocapacity = model.params
+    @unpack demand, hydrogendemand, classlimits, hydrocapacity = model.params
     @unpack ElecDemand, HydrogenDemand  = model.constraints
     #price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     #price=DataFrame(price1)
@@ -147,7 +147,7 @@ const CHARTTECHS = Dict(
 
 function analyzeresults(results::Results)
     @unpack REGION, FUEL, TECH, CLASS, HOUR, techtype, STORAGECLASS = results.sets
-    @unpack demand, classlimits, hydrocapacity = results.params
+    @unpack demand, hydrogendemand, classlimits, hydrocapacity = results.params
     @unpack CO2emissions, FuelUse, Electricity, Transmission, Capacity, TransmissionCapacity, Charging, StorageLevel, Systemcost = results
 
     hoursperperiod = results.hourinfo.hoursperperiod
@@ -179,7 +179,7 @@ function analyzeresults(results::Results)
         if country == :BARS
             existinghydro = vec(sum(Electricity[:hydro,:x0], dims=1))
             regcost = Systemcost ./ vec(sum(annualelec, dims=1)[1:end-1]) * 1000
-            avcost = sum(Systemcost) / sum(demand*hoursperperiod) * 1000
+            avcost = sum(Systemcost) / ((1+hydrogendemand)*sum(demand*hoursperperiod)) * 1000
             totcost = sum(Systemcost)
             lcoe = NamedArray(collect([regcost; avcost; totcost]'), (["system cost (€/MWh)"], [REGION; :AVERAGE; :TOTAL]))
             println("Regional system cost per MWh generated (€/MWh):")
