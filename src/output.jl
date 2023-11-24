@@ -65,7 +65,7 @@ function readresults(model::ModelInfo, status::Symbol)
     transmissioncapac = AxisArray(getvalue(TransmissionCapacity))
     capac = getdict(getvalue(Capacity))
 
-    return Results(status, model.options, model.hourinfo, model.sets, params, cost, emis, fuel, elec, charge, storage, transmission, transmissioncapac, capac, hydrogendemand)
+    return Results(status, model.options, model.hourinfo, model.sets, params, cost, emis, fuel, elec, charge, storage, transmission, transmissioncapac, capac)
 end
 
 function saveresults(results::Results, runname; resultsfile="", group="", compress=true)
@@ -149,9 +149,8 @@ const CHARTTECHS = Dict(
 function analyzeresults(results::Results)
     @unpack REGION, FUEL, TECH, CLASS, HOUR, techtype, STORAGECLASS = results.sets
     @unpack demand, classlimits, hydrocapacity = results.params
-    @unpack CO2emissions, FuelUse, Electricity, Transmission, Capacity, TransmissionCapacity, Charging, StorageLevel, Systemcost, hydrogendemand = results
-    #@unpack hydrogendemand = results.options
-
+    @unpack CO2emissions, FuelUse, Electricity, Transmission, Capacity, TransmissionCapacity, Charging, StorageLevel, Systemcost = results
+    @unpack carbontax, carboncap, rampingconstraints, maxbioenergy, maxdemandresponse, hydrogendemand, globalnuclearlimit  = results.options
     hoursperperiod = results.hourinfo.hoursperperiod
 
     capacmat = [sum(Capacity[r,k,c] for c in CLASS[k]) for k in TECH, r in REGION]
