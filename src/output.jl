@@ -26,7 +26,7 @@ function readresults(model::ModelInfo, status::Symbol)
     @unpack Systemcost, CO2emissions, FuelUse, Electricity, Charging, StorageLevel, Transmission, TransmissionCapacity, Capacity = model.vars
     @unpack demand, classlimits, hydrocapacity = model.params
     @unpack ElecDemand, HydrogenDemand  = model.constraints
-    #@unpack carbontax, carboncap, rampingconstraints, maxbioenergy, maxdemandresponse, hydrogendemand, globalnuclearlimit  = model.options
+    @unpack carbontax, carboncap, rampingconstraints, maxbioenergy, maxdemandresponse, hydrogendemand, globalnuclearlimit  = model.options
     #price1 = AxisArray([getdual(ElecDemand[r,h]) for r in REGION, h in HOUR])'
     #price=DataFrame(price1)
     #region1=strip("$REGION", '[')
@@ -65,7 +65,7 @@ function readresults(model::ModelInfo, status::Symbol)
     transmissioncapac = AxisArray(getvalue(TransmissionCapacity))
     capac = getdict(getvalue(Capacity))
 
-    return Results(status, model.options, model.hourinfo, model.sets, params, cost, emis, fuel, elec, charge, storage, transmission, transmissioncapac, capac)
+    return Results(status, model.options, model.hourinfo, model.sets, params, cost, emis, fuel, elec, charge, storage, transmission, transmissioncapac, capac, hydrogendemand)
 end
 
 function saveresults(results::Results, runname; resultsfile="", group="", compress=true)
@@ -148,8 +148,9 @@ const CHARTTECHS = Dict(
 
 function analyzeresults(results::Results)
     @unpack REGION, FUEL, TECH, CLASS, HOUR, techtype, STORAGECLASS = results.sets
-    @unpack demand, hydrogendemand, classlimits, hydrocapacity = results.params
-    @unpack CO2emissions, FuelUse, Electricity, Transmission, Capacity, TransmissionCapacity, Charging, StorageLevel, Systemcost = results
+    @unpack demand, classlimits, hydrocapacity = results.params
+    @unpack CO2emissions, FuelUse, Electricity, Transmission, Capacity, TransmissionCapacity, Charging, StorageLevel, Systemcost, hydrogendemand = results
+    #@unpack hydrogendemand = results.options
 
     hoursperperiod = results.hourinfo.hoursperperiod
 
