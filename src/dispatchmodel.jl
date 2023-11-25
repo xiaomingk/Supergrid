@@ -77,9 +77,9 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
         ElecDemand[r in REGION, h in HOUR],
             sum(Electricity[r,k,c,h] for k in TECH, c in CLASS[k]) - sum(Charging[r,k,h] for k in TECH if techtype[k] == :storage) +
                 + sum((1-transmissionlosses[r2,r])*Transmission[r2,r,h] - Transmission[r,r2,h] for r2 in REGION) -
-                (1 + 1 / efficiency[:electrolyzer]) * Electricity[r,:electrolyzer,:_,h] + Charging[r,:hydrogenstore,h] - Electricity[r,:hydrogenstore,:_,h] >=
+                (1 + 1 / efficiency[:electrolyzer]) * Electricity[r,:electrolyzer,:_,h] - Electricity[r,:hydrogenstore,:_,h] >=
                     demand[r,h] * hoursperperiod
-
+        #+ Charging[r,:hydrogenstore,h]
         # <= instead of == to avoid need of slack variable to deal with spillage during spring floods, etc
         StorageBalance[r in REGION, k in storagetechs, sc in STORAGECLASS[k], h in HOUR],
             (StorageLevel[r,k,sc,h] - StorageLevel[r,k,sc, (h>1) ? h-1 : length(HOUR)]) / 1 <=  # unit: energy diff per period (TWh/period)
