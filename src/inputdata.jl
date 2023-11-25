@@ -123,7 +123,7 @@ function makeparameters(sets, options, hourinfo)
 
 
     # read synthetic demand data (in UTC)
-    gisdemand = 2*JLD.load(joinpath(inputdata,
+    gisdemand = JLD.load(joinpath(inputdata,
         "SyntheticDemand_$(regionset)_$sspscenario-$(sspyear)_$datayear.jld"), "demand")
     for i = 1:numregions
         demand[i,:] = reducehours(gisdemand[:,i], 1, hourinfo) / 1000       # GW
@@ -235,10 +235,10 @@ function makeparameters(sets, options, hourinfo)
         :hydrogenstore  11          0               0           20          0.5         1
         :fuelcell       800         0               40          10          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
-        :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
+        :battery        385         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
         :pv             323         0               8           25          1           1
         :pvroof         423         0               6           25          1           1
-        :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours
+        :csp            6500        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours
         :hydro          300         0               25          80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
     ]
     techs = techtable[:,1]
@@ -303,12 +303,12 @@ function makeparameters(sets, options, hourinfo)
     cf[isnan.(cf)] = zeros(sum(isnan.(cf)))
     cf[cf .< 0.01] = zeros(sum(cf .< 0.01))     # set small values to 0 for better numerical stability
 
-    classlimits[:,:wind,1:5] = windvars["capacity_onshoreA"][activeregions,:] * solarwindarea
-    classlimits[:,:offwind,1:5] = windvars["capacity_offshore"][activeregions,:] * (1 + 0.5*(solarwindarea - 1))    # only half because default offshore area is 33%
+    classlimits[:,:wind,1:5] = windvars["capacity_onshoreA"][activeregions,:] * solarwindarea*0
+    classlimits[:,:offwind,1:5] = windvars["capacity_offshore"][activeregions,:] * (1 + 0.5*(solarwindarea - 1))*0    # only half because default offshore area is 33%
     classlimits[:,:pv,1:5] = solarvars["capacity_pvplantA"][activeregions,:] * solarwindarea
     classlimits[:,:pvroof,1:5] = solarvars["capacity_pvrooftop"][activeregions,:] * solarwindarea
     classlimits[:,:csp,1:5] = solarvars["capacity_cspplantA"][activeregions,:] * solarwindarea
-    classlimits[:,:wind,6:10] = windvars["capacity_onshoreB"][activeregions,:] * solarwindarea
+    classlimits[:,:wind,6:10] = windvars["capacity_onshoreB"][activeregions,:] * solarwindarea*0
     classlimits[:,:pv,6:10] = solarvars["capacity_pvplantB"][activeregions,:] * solarwindarea
     classlimits[:,:csp,6:10] = solarvars["capacity_cspplantB"][activeregions,:] * solarwindarea
 
