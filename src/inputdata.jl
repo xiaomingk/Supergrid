@@ -303,12 +303,12 @@ function makeparameters(sets, options, hourinfo)
     cf[isnan.(cf)] = zeros(sum(isnan.(cf)))
     cf[cf .< 0.01] = zeros(sum(cf .< 0.01))     # set small values to 0 for better numerical stability
 
-    classlimits[:,:wind,1:5] = windvars["capacity_onshoreA"][activeregions,:] * solarwindarea*0
-    classlimits[:,:offwind,1:5] = windvars["capacity_offshore"][activeregions,:] * (1 + 0.5*(solarwindarea - 1))*0    # only half because default offshore area is 33%
+    classlimits[:,:wind,1:5] = windvars["capacity_onshoreA"][activeregions,:] * solarwindarea
+    classlimits[:,:offwind,1:5] = windvars["capacity_offshore"][activeregions,:] * (1 + 0.5*(solarwindarea - 1))    # only half because default offshore area is 33%
     classlimits[:,:pv,1:5] = solarvars["capacity_pvplantA"][activeregions,:] * solarwindarea
     classlimits[:,:pvroof,1:5] = solarvars["capacity_pvrooftop"][activeregions,:] * solarwindarea
     classlimits[:,:csp,1:5] = solarvars["capacity_cspplantA"][activeregions,:] * solarwindarea
-    classlimits[:,:wind,6:10] = windvars["capacity_onshoreB"][activeregions,:] * solarwindarea*0
+    classlimits[:,:wind,6:10] = windvars["capacity_onshoreB"][activeregions,:] * solarwindarea
     classlimits[:,:pv,6:10] = solarvars["capacity_pvplantB"][activeregions,:] * solarwindarea
     classlimits[:,:csp,6:10] = solarvars["capacity_cspplantB"][activeregions,:] * solarwindarea
 
