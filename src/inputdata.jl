@@ -128,7 +128,7 @@ function makeparameters(sets, options, hourinfo)
     for i = 1:numregions
         demand[i,:] = reducehours(gisdemand[:,i], 1, hourinfo) / 1000       # GW
     end
-    giswacc = JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
+    giswacc = 0.05 # JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
     hydrovars = matread(joinpath(inputdata, "GISdata_hydro_$regionset.mat"))
     hydrocapacity = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
     hydroeleccost = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
@@ -144,7 +144,8 @@ function makeparameters(sets, options, hourinfo)
     # 1$ = 0.9€ (average 2015-2017)
     hydroeleccost[:,2:end] = reshape(hydrovars["potentialmeancost"][activeregions,:,:], numregions, nhydro-1)   # $/kWh with 10% discount rate
     for r in 1:numregions, c in 1:nhydro
-    hydroeleccost[r,c] = hydroeleccost[r,c] * CRF(giswacc[r],40)/CRF(0.1,40) * 0.9 * 1000     # €/MWh    (0.9 €/$)
+    hydroeleccost[r,c] = hydroeleccost[r,c] * CRF(0.05,40)/CRF(0.1,40) * 0.9 * 1000     # €/MWh    (0.9 €/$)
+    #hydroeleccost[r,c] = hydroeleccost[r,c] * CRF(giswacc[r],40)/CRF(0.1,40) * 0.9 * 1000     # €/MWh    (0.9 €/$)
     end
     hydroeleccost[isnan.(hydroeleccost)] = fill(999, sum(isnan.(hydroeleccost)))
 
@@ -229,16 +230,16 @@ function makeparameters(sets, options, hourinfo)
         :bioCCGT        800         1               16          30          0.6         0.3
         :demandresponse 0           1000            0           100         1           1
         :nuclear        5000        3               150         50          0.4         0.05
-        :wind           1715        0               33          25          1           1
-        :offwind        3461        0               55          25          1           1
+        :wind           825         0               33          25          1           1            # high value 1715
+        :offwind        1500        0               55          25          1           1            # high value 3461
         :electrolyzer   250         0               5           25          0.66        1
         :hydrogenstore  11          0               0           20          0.5         1
         :fuelcell       800         0               40          10          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
-        :battery        385         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh
+        :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh  # high value 385
         :pv             323         0               8           25          1           1
         :pvroof         423         0               6           25          1           1
-        :csp            6500        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours
+        :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours # high value 6500
         :hydro          300         0               25          80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
     ]
     techs = techtable[:,1]
@@ -268,16 +269,18 @@ function makeparameters(sets, options, hourinfo)
 
     #crf = AxisArray(discountrate ./ (1 .- 1 ./(1+discountrate).^lifetime), techs)
     # read wacc data
-    giswacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacctr")
+    giswacctr = 0.05 #JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacctr")
 
     crf=AxisArray(zeros(numregions, numtechs), REGION, techs)
     crftr=AxisArray(zeros(numregions,numregions), REGION,REGION)
     for i = 1:numregions, j = 1:numtechs
-        crf[i,j] = giswacc[i] / (1 - 1 /(1+giswacc[i])^lifetime[j])
+         crf[i,j] = giswacc / (1 - 1 /(1+giswacc)^lifetime[j])
+    #    crf[i,j] = giswacc[i] / (1 - 1 /(1+giswacc[i])^lifetime[j])
     end
 
     for i = 1:numregions, j = 1:numregions
-        crftr[i,j] = giswacctr[i,j] / (1 - 1 /(1+giswacctr[i,j])^40)
+         crftr[i,j] = giswacctr / (1 - 1 /(1+giswacctr)^40)
+#        crftr[i,j] = giswacctr[i,j] / (1 - 1 /(1+giswacctr[i,j])^40)
     end
 
     emissionsCO2 = AxisArray(zeros(length(FUEL)), FUEL)
