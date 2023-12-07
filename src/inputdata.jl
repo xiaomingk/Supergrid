@@ -229,7 +229,7 @@ function makeparameters(sets, options, hourinfo)
         :bioGT          500         1               10          30          0.4         1
         :bioCCGT        800         1               16          30          0.6         0.3
         :demandresponse 0           1000            0           100         1           1
-        :nuclear        5000        3               150         50          0.4         0.05
+        :nuclear        4000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1            # high value 1715
         :offwind        1500        0               55          25          1           1            # high value 3461
         :electrolyzer   250         0               5           25          0.66        1
