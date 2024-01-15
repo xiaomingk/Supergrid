@@ -13,7 +13,7 @@ Next, type `]` to enter Julia's package mode, then:
 
 (v1.3.1) pkg> add AxisArrays
 
-(v1.3.1) pkg> add https://github.com/niclasmattsson/Supergrid
+(v1.3.1) pkg> add https://github.com/xiaomingk/Supergrid
 ```
 
 Grab some coffee, because installing and compiling dependencies can take quite some time to run.
