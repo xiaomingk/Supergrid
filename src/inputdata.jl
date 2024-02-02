@@ -204,8 +204,8 @@ function makeparameters(sets, options, hourinfo)
     end
 
     # from Bogdanov & Breyer (2016) "North-East Asian Super Grid..."
-    transmissioncostdata =(connected .* (150 .+ 0.4*distances) .+ connectedoffshore .* (150 .+ 0.47*distances))*0.25
-    transmissionfixedcostdata = (connected .* (0.008*distances) .+ connectedoffshore .* (0.00165*distances))*0.25
+    transmissioncostdata =(connected .* (150 .+ 0.2*distances) .+ connectedoffshore .* (150 .+ 0.47*distances))*1
+    transmissionfixedcostdata = (connected .* (0.008*distances) .+ connectedoffshore .* (0.00165*distances))*1
     transmissioninvestcost = AxisArray(transmissioncostdata, REGION, REGION)        # €/kW
     transmissionfixedcost = AxisArray(transmissionfixedcostdata, REGION, REGION)        # €/kW
     transmissionlossdata = (connected .| connectedoffshore) .* (0.014 .+ 0.016*distances/1000)
