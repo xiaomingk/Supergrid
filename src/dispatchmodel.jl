@@ -136,7 +136,7 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
                 + 0.001 * sum(Electricity[r,:hydro,c,h] * hydroeleccost[r,c] for c in CLASS[:hydro], h in HOUR) +
                 + 0.001 * sum(Transmission[r,r2,h] * smalltransmissionpenalty for r2 in REGION, h in HOUR) +
                 + sum(capacity[r,k,c] * (investcost[k,c] * crf[r,k] + fixedcost[k]) for k in TECH, c in CLASS[k]) +
-                + 0 * sum(transmissioncapacity[r,r2] *
+                + 0.5 * sum(transmissioncapacity[r,r2] *
                             (transmissioninvestcost[r,r2] * crftr[r,r2] + transmissionfixedcost[r,r2]) for r2 in REGION)
         # =#
     end #constraints
