@@ -228,7 +228,7 @@ function makeparameters(sets, options, hourinfo)
         :coal           1600        2               48          30          0.45        0.15
         :bioGT          500         1               10          30          0.4         1
         :bioCCGT        800         1               16          30          0.6         0.3
-        :demandresponse 0           1000            0           100         1           1
+        :demandresponse 0           100000            0           100         1           1
         :nuclear        5000        3               150         50          0.4         0.05
         :wind           825         0               33          25          1           1            # extremely high value 1715,1000
         :offwind        1500        0               55          25          1           1            # extremely high value 3461
