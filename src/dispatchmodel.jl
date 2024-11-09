@@ -100,7 +100,7 @@ function makedispatchconstraints(capacity, transmissioncapacity, m, sets, params
             sum(AnnualGeneration[r,k] for k in [:bioGT, :bioCCGT]) <= maxbioenergy * sum(demand[r,h] for h in HOUR) * hoursperperiod
 
             DemandresponseLimit[r in REGION, h in HOUR],
-                Electricity[r,:demandresponse,h] <= maxdemandresponse * demand[r,h] * hoursperperiod
+                Electricity[r,:demandresponse,:_,h] <= maxdemandresponse * demand[r,h] * hoursperperiod
 
         HydrogenDemand[r in REGION],
            #sum(AnnualGeneration[r,k] for k in [:electrolyzer]) - sum(Charging[r,:hydrogenstore,h] for h in HOUR) == 0.5 * sum(demand[r,h] for h in HOUR) * hoursperperiod
