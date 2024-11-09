@@ -208,7 +208,7 @@ function makeparameters(sets, options, hourinfo)
     transmissionfixedcostdata = (connected .* (0.008*distances) .+ connectedoffshore .* (0.00165*distances))*1
     transmissioninvestcost = AxisArray(transmissioncostdata, REGION, REGION)        # €/kW
     transmissionfixedcost = AxisArray(transmissionfixedcostdata, REGION, REGION)        # €/kW
-    transmissionlossdata = (connected .| connectedoffshore) .* (0.014 .+ 0.016*distances/1000)
+    transmissionlossdata = (connected .| connectedoffshore) .* (0.014 .+ 0.035*distances/1000)
     transmissionlosses = AxisArray(transmissionlossdata, REGION, REGION)
     smalltransmissionpenalty = 0.1      # €/MWh elec
 
@@ -236,7 +236,7 @@ function makeparameters(sets, options, hourinfo)
         :hydrogenstore  11          0               0           20          0.5         1
         :fuelcell       800         0               40          10          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
-        :battery        116         0.1             1.5         10          0.9         1   # 1h discharge time, 150 €/kW = 150 €/kWh  # high value 385
+        :battery        116         0.1             1.5         10          0.85        1   # 1h discharge time, 150 €/kW = 150 €/kWh  # high value 385
         :pv             323         0               8           25          1           1
         :pvroof         423         0               6           25          1           1
         :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours # high value 6500
