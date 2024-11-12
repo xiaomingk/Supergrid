@@ -128,7 +128,8 @@ function makeparameters(sets, options, hourinfo)
     for i = 1:numregions
         demand[i,:] = reducehours(gisdemand[:,i], 1, hourinfo) / 1000       # GW
     end
-    giswacc =JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
+    #giswacc =JLD.load(joinpath(inputdata,"WACC_$(regionset)_$datayear.jld"), "wacc")
+    giswacc = 0.05
     hydrovars = matread(joinpath(inputdata, "GISdata_hydro_$regionset.mat"))
     hydrocapacity = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
     hydroeleccost = AxisArray(zeros(numregions,nhydro), REGION, CLASS[:hydro])
@@ -269,18 +270,19 @@ function makeparameters(sets, options, hourinfo)
 
     #crf = AxisArray(discountrate ./ (1 .- 1 ./(1+discountrate).^lifetime), techs)
     # read wacc data
-    giswacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacctr")
+    #giswacctr = JLD.load(joinpath(inputdata,"WACCTR_$(regionset)_$datayear.jld"), "wacctr")
+    giswacctr = 0.05
 
     crf=AxisArray(zeros(numregions, numtechs), REGION, techs)
     crftr=AxisArray(zeros(numregions,numregions), REGION,REGION)
     for i = 1:numregions, j = 1:numtechs
-    #     crf[i,j] = giswacc / (1 - 1 /(1+giswacc)^lifetime[j])
-        crf[i,j] = giswacc[i] / (1 - 1 /(1+giswacc[i])^lifetime[j])
+         crf[i,j] = giswacc / (1 - 1 /(1+giswacc)^lifetime[j])
+    #    crf[i,j] = giswacc[i] / (1 - 1 /(1+giswacc[i])^lifetime[j])
     end
 
     for i = 1:numregions, j = 1:numregions
-#         crftr[i,j] = giswacctr / (1 - 1 /(1+giswacctr)^40)
-         crftr[i,j] = giswacctr[i,j] / (1 - 1 /(1+giswacctr[i,j])^40)
+         crftr[i,j] = giswacctr / (1 - 1 /(1+giswacctr)^40)
+#         crftr[i,j] = giswacctr[i,j] / (1 - 1 /(1+giswacctr[i,j])^40)
     end
 
     emissionsCO2 = AxisArray(zeros(length(FUEL)), FUEL)
