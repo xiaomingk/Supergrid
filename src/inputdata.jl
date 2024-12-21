@@ -231,15 +231,15 @@ function makeparameters(sets, options, hourinfo)
         :bioCCGT        800         1               16          30          0.6         0.3
         :demandresponse 0           1000            0           100         1           1
         :nuclear        5000        3               150         50          0.4         0.05
-        :wind           825         0               33          25          1           1            # extremely high value 1715,1000
+        :wind           650         0               33          25          1           1            # extremely high value 1715,1000
         :offwind        1500        0               55          25          1           1            # extremely high value 3461
         :electrolyzer   250         0               5           25          0.66        1
         :hydrogenstore  11          0               0           20          0.5         1
         :fuelcell       800         0               40          10          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
-        :battery        116         0.1             1.5         10          0.85        1   # 1h discharge time, 150 €/kW = 150 €/kWh  # high value 385
-        :pv             323         0               8           25          1           1
-        :pvroof         423         0               6           25          1           1
+        :battery        156         0.1             1.5         10          0.85        1   # 1h discharge time, 150 €/kW = 150 €/kWh  # high value 385
+        :pv             481         0               8           25          1           1
+        :pvroof         581         0               6           25          1           1
         :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours # high value 6500
         :hydro          300         0               25          80          1           1   # small artificial investcost so it doesn't overinvest in free capacity
     ]
