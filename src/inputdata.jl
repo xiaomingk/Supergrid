@@ -237,7 +237,7 @@ function makeparameters(sets, options, hourinfo)
         :hydrogenstore  11          0               0           20          0.5         1
         :fuelcell       800         0               40          10          0.5         1
         :transmission   NaN         0               NaN         40          NaN         1
-        :battery        156         0.1             1.5         10          0.85        1   # 1h discharge time, 150 €/kW = 150 €/kWh  # high value 385
+        :battery        76         0.1             1.5         10          0.85        1   # 1h discharge time, 150 €/kW = 150 €/kWh  # high value 385
         :pv             165         0               8           25          1           1
         :pvroof         265         0               6           25          1           1
         :csp            3746        2.9             56          30          1           1   # for solar multiple=3, storage=12 hours # high value 6500
